@@ -1,0 +1,18 @@
+server:
+  port: 9090
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  cloud:
+    stream:
+      rocketmq:
+        binder:
+          name-server: localhost:9876
+      bindings:
+        output:
+          destination: TEST_STREAM_TOPIC
+        input:
+          destination: TEST_STREAM_TOPIC
+          group: ROCKETMQ_STREAM_LEARNING
