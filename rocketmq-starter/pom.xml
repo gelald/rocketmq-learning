@@ -33,6 +33,11 @@
             <artifactId>rocketmq-client</artifactId>
             <version>${rocketmq-client.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.gelald</groupId>
+            <artifactId>rocketmq-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
