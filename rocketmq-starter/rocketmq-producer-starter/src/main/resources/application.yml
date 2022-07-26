@@ -1,0 +1,18 @@
+server:
+  port: 9091
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+rocketmq:
+  name-server: 192.168.1.112:9876
+  producer:
+    group: ROCKETMQ_STARTER_LEARNING
+    # 消息发送超时时长，默认3s
+    send-message-timeout: 3000
+    # 同步发送消息失败重试次数，默认2
+    retry-times-when-send-failed: 3
+    # 异步发送消息失败重试次数，默认2
+    retry-times-when-send-async-failed: 3

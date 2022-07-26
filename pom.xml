@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rocketmq-common</module>
+        <module>rocketmq-client</module>
         <module>rocketmq-starter</module>
         <module>rocketmq-stream</module>
     </modules>

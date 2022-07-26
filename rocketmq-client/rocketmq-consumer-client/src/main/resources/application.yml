@@ -1,0 +1,15 @@
+server:
+  port: 9092
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+learning:
+  rocketmq:
+    consumer:
+      name-server-addr: 192.168.1.112:9876

@@ -1,0 +1,10 @@
+server:
+  port: 9092
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+rocketmq:
+  name-server: 192.168.1.112:9876
