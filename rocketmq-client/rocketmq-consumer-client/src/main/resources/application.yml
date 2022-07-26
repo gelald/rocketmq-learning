@@ -12,4 +12,4 @@ spring:
 learning:
   rocketmq:
     consumer:
-      name-server-addr: 192.168.1.112:9876
+      name-server-addr: localhost:9876
