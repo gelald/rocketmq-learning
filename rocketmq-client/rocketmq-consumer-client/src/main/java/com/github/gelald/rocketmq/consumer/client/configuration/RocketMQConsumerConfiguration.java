@@ -1,5 +1,6 @@
 package com.github.gelald.rocketmq.consumer.client.configuration;
 
+import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import com.github.gelald.rocketmq.consumer.client.listener.OrdinaryListener;
 import com.github.gelald.rocketmq.consumer.client.property.RocketMQConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +34,9 @@ public class RocketMQConsumerConfiguration implements DisposableBean {
     public DefaultMQPushConsumer ordinaryConsumer() throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
         defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
-        defaultMQPushConsumer.setConsumerGroup("ROCKETMQ_CLIENT_ORDINARY");
+        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client"));
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        defaultMQPushConsumer.subscribe("RocketMQClientOrdinaryTopic", "*");
+        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "*");
         defaultMQPushConsumer.setMessageListener(this.ordinaryListener);
         defaultMQPushConsumer.start();
         mqConsumers.add(defaultMQPushConsumer);

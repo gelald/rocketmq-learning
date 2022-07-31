@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Date 2022/7/26
  */
 @Slf4j
-@ApiOperation("消息生产者")
+@Api(tags = "消息生产者")
 @RestController
 @RequestMapping("/mq-producer")
 public class RocketMQProducerController {

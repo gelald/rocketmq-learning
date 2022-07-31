@@ -1,5 +1,6 @@
 package com.github.gelald.rocketmq.producer.client.configuration;
 
+import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import com.github.gelald.rocketmq.producer.client.property.RocketMQProducerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -31,7 +32,7 @@ public class RocketMQProducerConfiguration implements DisposableBean {
     public DefaultMQProducer defaultMQProducer() throws MQClientException {
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer();
         defaultMQProducer.setNamesrvAddr(this.rocketMQProducerProperties.getNameServerAddr());
-        defaultMQProducer.setProducerGroup(this.rocketMQProducerProperties.getProducerGroup());
+        defaultMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + this.rocketMQProducerProperties.getProducerGroupSuffix()));
         defaultMQProducer.start();
         mqProducers.add(defaultMQProducer);
         log.info("普通生产者创建成功");
@@ -43,7 +44,7 @@ public class RocketMQProducerConfiguration implements DisposableBean {
     public TransactionMQProducer transactionMQProducer() throws MQClientException {
         TransactionMQProducer transactionMQProducer = new TransactionMQProducer();
         transactionMQProducer.setNamesrvAddr(this.rocketMQProducerProperties.getNameServerAddr());
-        transactionMQProducer.setProducerGroup(this.rocketMQProducerProperties.getProducerGroup());
+        transactionMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + this.rocketMQProducerProperties.getProducerGroupSuffix()));
         transactionMQProducer.setTransactionListener(new TransactionListener() {
             @Override
             public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {

@@ -1,5 +1,6 @@
 package com.github.gelald.rocketmq.consumer.starter.consumer;
 
+import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -15,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 @RocketMQMessageListener(
-        consumerGroup = "ROCKETMQ_STARTER_ORDINARY",
-        topic = "RocketMQStarterOrdinaryTopic"
+        consumerGroup = (RocketMQConstant.CONSUMER_GROUP_PREFIX + "starter"),
+        topic = (RocketMQConstant.TOPIC_PREFIX + "starter-ordinary")
 )
 public class RocketMQConsumer implements RocketMQListener<MessageExt> {
     @Override

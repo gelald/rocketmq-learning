@@ -1,5 +1,8 @@
 package com.github.gelald.rocketmq.producer.client.controller;
 
+import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -20,6 +23,7 @@ import java.nio.charset.StandardCharsets;
  * Date 2022/7/26
  */
 @Slf4j
+@Api(tags = "消息生产者")
 @RestController
 @RequestMapping("/mq-producer")
 public class RocketMQProducerController {
@@ -27,16 +31,18 @@ public class RocketMQProducerController {
     private DefaultMQProducer defaultMQProducer;
     private TransactionMQProducer transactionMQProducer;
 
+    @ApiOperation("发送带有响应的普通消息")
     @GetMapping("/duplex")
     public SendResult sendDuplexMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
-        Message message = new Message("RocketMQClientOrdinaryTopic", "duplex", "two-way message".getBytes(StandardCharsets.UTF_8));
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "duplex", "two-way message".getBytes(StandardCharsets.UTF_8));
         SendResult sendResult = this.defaultMQProducer.send(message);
         return sendResult;
     }
 
+    @ApiOperation("发送单向消息")
     @GetMapping("/simplex")
     public String sendSimplexMessage() throws RemotingException, InterruptedException, MQClientException {
-        Message message = new Message("RocketMQClientOrdinaryTopic", "simplex", "one-way message".getBytes(StandardCharsets.UTF_8));
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "simplex", "one-way message".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.sendOneway(message);
         return "send successfully";
     }

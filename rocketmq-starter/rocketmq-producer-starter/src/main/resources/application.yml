@@ -13,7 +13,7 @@ spring:
 rocketmq:
   name-server: localhost:9876
   producer:
-    group: ROCKETMQ_STARTER_LEARNING
+    group: rocketmq-producer-starter
     # 消息发送超时时长，默认3s
     send-message-timeout: 3000
     # 同步发送消息失败重试次数，默认2
@@ -22,6 +22,6 @@ rocketmq:
     retry-times-when-send-async-failed: 3
 
 base:
-  response-body-advice-package: com.github.gelald.rocketmq.producer.starter
+  response-body-advice-package: ${base.swagger-package}
   swagger-package: com.github.gelald.rocketmq.producer.starter
   swagger-title: rocketmq-starter方式集成rocketmq演示

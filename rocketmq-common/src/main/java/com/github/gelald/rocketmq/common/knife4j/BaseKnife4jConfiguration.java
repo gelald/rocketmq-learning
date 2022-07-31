@@ -14,7 +14,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @author WuYingBin
  * date: 2022/7/23
  */
-public abstract class BaseSwaggerConfiguration {
+public abstract class BaseKnife4jConfiguration {
     @Bean
     public Docket createRestApi() {
         BaseProperties baseProperties = properties();

@@ -1,5 +1,6 @@
 package com.github.gelald.rocketmq.producer.starter.producer;
 
+import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,12 @@ public class RocketMQProducer {
     private RocketMQTemplate rocketMQTemplate;
 
     public SendResult sendDuplexMessage() {
-        SendResult sendResult = this.rocketMQTemplate.syncSend("RocketMQStarterOrdinaryTopic:duplex", "two-way message");
+        SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter-ordinary:duplex"), "two-way message");
         return sendResult;
     }
 
     public void sendSimplexMessage() {
-        this.rocketMQTemplate.sendOneWay("RocketMQStarterOrdinaryTopic:simplex", "one-way message");
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-ordinary:simplex"), "one-way message");
     }
 
     @Autowired
