@@ -12,7 +12,6 @@
         <module>rocketmq-common</module>
         <module>rocketmq-client</module>
         <module>rocketmq-starter</module>
-        <module>rocketmq-stream</module>
     </modules>
 
     <properties>
@@ -52,10 +51,10 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                         </exclude>
-                        <!--<exclude>
+                        <exclude>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                        </exclude>-->
+                        </exclude>
                     </excludes>
                 </configuration>
             </plugin>
