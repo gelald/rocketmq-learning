@@ -1,13 +1,14 @@
 package com.github.gelald.rocketmq.consumer.client.configuration;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
-import com.github.gelald.rocketmq.consumer.client.listener.OrdinaryListener;
 import com.github.gelald.rocketmq.consumer.client.property.RocketMQConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.MQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,19 +29,90 @@ public class RocketMQConsumerConfiguration implements DisposableBean {
     private static final List<MQPushConsumer> mqConsumers = new CopyOnWriteArrayList<>();
 
     private RocketMQConsumerProperties rocketMQConsumerProperties;
-    private OrdinaryListener ordinaryListener;
 
+    /**
+     * 消费普通消息的消费者
+     */
     @Bean
-    public DefaultMQPushConsumer ordinaryConsumer() throws MQClientException {
+    public DefaultMQPushConsumer ordinaryConsumer(MessageListenerConcurrently ordinaryListener) throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
         defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client"));
+        defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "*");
-        defaultMQPushConsumer.setMessageListener(this.ordinaryListener);
+        defaultMQPushConsumer.setMessageListener(ordinaryListener);
         defaultMQPushConsumer.start();
         mqConsumers.add(defaultMQPushConsumer);
         log.info("普通消息消费者创建成功");
+        return defaultMQPushConsumer;
+    }
+
+    /**
+     * 集群消费的消费者1
+     */
+    @Bean
+    public DefaultMQPushConsumer clusteringMQPushConsumerOne(MessageListenerConcurrently clusteringListenerOne) throws MQClientException {
+        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
+        defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
+        defaultMQPushConsumer.setInstanceName("clustering-consumer-one");
+        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-clustering"));
+        defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
+        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-clustering"), "*");
+        defaultMQPushConsumer.setMessageListener(clusteringListenerOne);
+        defaultMQPushConsumer.start();
+        mqConsumers.add(defaultMQPushConsumer);
+        return defaultMQPushConsumer;
+    }
+
+    /**
+     * 集群消费的消费者2
+     */
+    @Bean
+    public DefaultMQPushConsumer clusteringMQPushConsumerTwo(MessageListenerConcurrently clusteringListenerTwo) throws MQClientException {
+        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
+        defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
+        defaultMQPushConsumer.setInstanceName("clustering-consumer-two");
+        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-clustering"));
+        defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
+        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-clustering"), "*");
+        defaultMQPushConsumer.setMessageListener(clusteringListenerTwo);
+        defaultMQPushConsumer.start();
+        mqConsumers.add(defaultMQPushConsumer);
+        return defaultMQPushConsumer;
+    }
+
+    /**
+     * 广播消费的消费者1
+     */
+    @Bean
+    public DefaultMQPushConsumer broadcastMQPushConsumerOne(MessageListenerConcurrently broadcastListenerOne) throws MQClientException {
+        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
+        defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
+        defaultMQPushConsumer.setInstanceName("broadcast-consumer-one");
+        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-broadcast"));
+        defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
+        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-broadcast"), "*");
+        defaultMQPushConsumer.setMessageListener(broadcastListenerOne);
+        defaultMQPushConsumer.start();
+        mqConsumers.add(defaultMQPushConsumer);
+        return defaultMQPushConsumer;
+    }
+
+    /**
+     * 广播消费的消费者2
+     */
+    @Bean
+    public DefaultMQPushConsumer broadcastMQPushConsumerTwo(MessageListenerConcurrently broadcastListenerTwo) throws MQClientException {
+        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
+        defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
+        defaultMQPushConsumer.setInstanceName("broadcast-consumer-two");
+        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-broadcast"));
+        defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
+        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-broadcast"), "*");
+        defaultMQPushConsumer.setMessageListener(broadcastListenerTwo);
+        defaultMQPushConsumer.start();
+        mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
     }
 
@@ -59,8 +131,4 @@ public class RocketMQConsumerConfiguration implements DisposableBean {
         this.rocketMQConsumerProperties = rocketMQConsumerProperties;
     }
 
-    @Autowired
-    public void setCommonListener(OrdinaryListener ordinaryListener) {
-        this.ordinaryListener = ordinaryListener;
-    }
 }

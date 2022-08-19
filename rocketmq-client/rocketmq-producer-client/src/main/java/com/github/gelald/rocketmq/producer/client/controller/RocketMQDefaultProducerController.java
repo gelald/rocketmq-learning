@@ -64,6 +64,28 @@ public class RocketMQDefaultProducerController {
         return "send complete";
     }
 
+    @ApiOperation("测试集群消费模式")
+    @GetMapping("/clustering-consume")
+    public String clusteringConsume() throws RemotingException, InterruptedException, MQClientException, MQBrokerException {
+        for (int i = 0; i < 20; i++) {
+            String messageBody = "测试集群消费模式第" + (i + 1) + "条消息";
+            Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-clustering"), messageBody.getBytes(StandardCharsets.UTF_8));
+            this.defaultMQProducer.send(message);
+        }
+        return "send complete";
+    }
+
+    @ApiOperation("测试广播消费模式")
+    @GetMapping("/broadcast-consume")
+    public String broadcastConsume() throws RemotingException, InterruptedException, MQClientException, MQBrokerException {
+        for (int i = 0; i < 20; i++) {
+            String messageBody = "测试广播消费模式第" + (i + 1) + "条消息";
+            Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-broadcast"), messageBody.getBytes(StandardCharsets.UTF_8));
+            this.defaultMQProducer.send(message);
+        }
+        return "send complete";
+    }
+
     @Autowired(required = false)
     public void setDefaultMQProducer(DefaultMQProducer defaultMQProducer) {
         this.defaultMQProducer = defaultMQProducer;
