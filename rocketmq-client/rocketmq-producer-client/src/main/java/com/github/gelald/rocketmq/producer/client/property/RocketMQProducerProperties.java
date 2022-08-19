@@ -21,11 +21,6 @@ public class RocketMQProducerProperties {
      * RocketMQ中NameServer地址
      */
     private String nameServerAddr;
-    /**
-     * 生产者组名称后缀
-     * 前缀见 {@link com.github.gelald.rocketmq.common.constant.RocketMQConstant#PRODUCER_GROUP_PREFIX}
-     */
-    private String producerGroupSuffix;
 
 
     public void setProducerType(RocketMQProducerEnum producerType) {
@@ -34,9 +29,5 @@ public class RocketMQProducerProperties {
 
     public void setNameServerAddr(String nameServerAddr) {
         this.nameServerAddr = nameServerAddr;
-    }
-
-    public void setProducerGroupSuffix(String producerGroupSuffix) {
-        this.producerGroupSuffix = producerGroupSuffix;
     }
 }

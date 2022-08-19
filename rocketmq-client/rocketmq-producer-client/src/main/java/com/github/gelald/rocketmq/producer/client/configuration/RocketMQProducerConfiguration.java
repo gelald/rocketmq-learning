@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author WuYingBin
@@ -32,7 +33,7 @@ public class RocketMQProducerConfiguration implements DisposableBean {
     public DefaultMQProducer defaultMQProducer() throws MQClientException {
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer();
         defaultMQProducer.setNamesrvAddr(this.rocketMQProducerProperties.getNameServerAddr());
-        defaultMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + this.rocketMQProducerProperties.getProducerGroupSuffix()));
+        defaultMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client"));
         defaultMQProducer.start();
         mqProducers.add(defaultMQProducer);
         log.info("普通生产者创建成功");
@@ -44,17 +45,25 @@ public class RocketMQProducerConfiguration implements DisposableBean {
     public TransactionMQProducer transactionMQProducer() throws MQClientException {
         TransactionMQProducer transactionMQProducer = new TransactionMQProducer();
         transactionMQProducer.setNamesrvAddr(this.rocketMQProducerProperties.getNameServerAddr());
-        transactionMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + this.rocketMQProducerProperties.getProducerGroupSuffix()));
+        transactionMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client"));
         transactionMQProducer.setTransactionListener(new TransactionListener() {
             @Override
             public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
-                System.out.println("接收到 MQ 的 half 消息响应，执行本地事务");
-                return LocalTransactionState.COMMIT_MESSAGE;
+                log.info("接收到RocketMQ的Half消息的响应，现在执行本地事务...");
+                try {
+                    // 线程睡眠500毫秒模拟本地事务执行
+                    TimeUnit.MILLISECONDS.sleep(500);
+                    log.info("本地事务执行成功，给RocketMQ发送ACK响应");
+                    return LocalTransactionState.COMMIT_MESSAGE;
+                } catch (InterruptedException e) {
+                    log.info("本地事务执行发生异常，需要回滚事务");
+                    return LocalTransactionState.ROLLBACK_MESSAGE;
+                }
             }
 
             @Override
             public LocalTransactionState checkLocalTransaction(MessageExt msg) {
-                System.out.println("MQ 长时间无法收到消息的状态/本地执行事务状态为UNKNOW，执行补偿事务");
+                log.info("由于RocketMQ长时间无法收到消息的状态或本地执行事务状态为UNKNOW，现在执行补偿事务/回查本地事务...");
                 return LocalTransactionState.ROLLBACK_MESSAGE;
             }
         });

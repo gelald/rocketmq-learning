@@ -12,8 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "base")
 public class BaseProperties {
+    /**
+     * 统一包装响应的包路径
+     */
     private String responseBodyAdvicePackage;
+    /**
+     * 需要生成Swagger文档的包路径
+     */
     private String swaggerPackage;
+    /**
+     * Swagger文档标题
+     */
     private String swaggerTitle;
 
     public void setResponseBodyAdvicePackage(String responseBodyAdvicePackage) {
