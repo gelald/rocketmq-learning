@@ -16,4 +16,5 @@ learning:
       consumer-switch:
         order: false
         message-model: false
+        filter: true
         transactional: false
