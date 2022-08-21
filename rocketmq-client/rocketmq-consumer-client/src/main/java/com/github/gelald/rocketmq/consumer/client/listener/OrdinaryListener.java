@@ -22,14 +22,17 @@ public class OrdinaryListener implements MessageListenerConcurrently {
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> messageExtList, ConsumeConcurrentlyContext context) {
         if (CollectionUtils.isEmpty(messageExtList)) {
-            System.out.println("MQ 接收的消息为空");
+            log.info("本次消息为空");
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         }
         for (MessageExt messageExt : messageExtList) {
             String topic = messageExt.getTopic();
             String tags = messageExt.getTags();
             String body = new String(messageExt.getBody(), StandardCharsets.UTF_8);
-            System.out.println("MQ消息topic=" + topic + ", tags=" + tags + ", 消息内容=" + body);
+            log.info("消息topic={},tags={},消息内容={}", topic, tags, body);
+            if (messageExt.getDelayTimeLevel() != 0) {
+                log.info("本次消息延时等级:{},延时时长为:{}", messageExt.getDelayTimeLevel(), messageExt.getProperty("delayTime"));
+            }
             try {
                 // 线程休眠模拟消费者业务执行
                 TimeUnit.MILLISECONDS.sleep(1500);

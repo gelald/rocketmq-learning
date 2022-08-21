@@ -86,6 +86,16 @@ public class RocketMQDefaultProducerController {
         return "send complete";
     }
 
+    @ApiOperation("发送延时消息")
+    @GetMapping("/delay-message")
+    public String sendDelayMessage() throws RemotingException, InterruptedException, MQClientException, MQBrokerException {
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "delay", "send third delay level message".getBytes(StandardCharsets.UTF_8));
+        message.setDelayTimeLevel(3);
+        message.putUserProperty("delayTime", "10秒");
+        this.defaultMQProducer.send(message);
+        return "send complete";
+    }
+
     @Autowired(required = false)
     public void setDefaultMQProducer(DefaultMQProducer defaultMQProducer) {
         this.defaultMQProducer = defaultMQProducer;
