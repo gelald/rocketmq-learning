@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import org.apache.rocketmq.client.exception.MQClientException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-public class RocketMQOrderConsumeConfiguration extends RocketMQConsumerBaseConfiguration {
-
+@ConditionalOnProperty(prefix = "learning.rocketmq.consumer.consumer-switch", name = "order", havingValue = "true")
+public class RocketMQOrderConsumeConfiguration extends RocketMQBaseConsumerConfiguration {
     /**
      * 全局有序的消费者
      */
@@ -65,5 +66,4 @@ public class RocketMQOrderConsumeConfiguration extends RocketMQConsumerBaseConfi
         mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
     }
-
 }

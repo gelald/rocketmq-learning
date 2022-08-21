@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Slf4j
 @Configuration
-public class RocketMQConsumerBaseConfiguration implements DisposableBean {
+public class RocketMQBaseConsumerConfiguration implements DisposableBean {
 
     protected final List<MQPushConsumer> mqConsumers = new CopyOnWriteArrayList<>();
 

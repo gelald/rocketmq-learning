@@ -17,9 +17,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Slf4j
 @Configuration
-public class RocketMQProducerBaseConfiguration implements DisposableBean {
+public class RocketMQBaseProducerConfiguration implements DisposableBean {
 
-    protected static final List<MQProducer> mqProducers = new CopyOnWriteArrayList<>();
+    public static final List<MQProducer> mqProducers = new CopyOnWriteArrayList<>();
     protected RocketMQProducerProperties rocketMQProducerProperties;
 
 

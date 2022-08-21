@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class OrdinaryListener implements MessageListenerConcurrently {
+public class DefaultListener implements MessageListenerConcurrently {
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> messageExtList, ConsumeConcurrentlyContext context) {
         if (CollectionUtils.isEmpty(messageExtList)) {
@@ -29,9 +29,9 @@ public class OrdinaryListener implements MessageListenerConcurrently {
             String topic = messageExt.getTopic();
             String tags = messageExt.getTags();
             String body = new String(messageExt.getBody(), StandardCharsets.UTF_8);
-            log.info("消息topic={},tags={},消息内容={}", topic, tags, body);
+            log.info("消息topic: {}, tags: {}, 消息内容: {}", topic, tags, body);
             if (messageExt.getDelayTimeLevel() != 0) {
-                log.info("本次消息延时等级:{},延时时长为:{}", messageExt.getDelayTimeLevel(), messageExt.getProperty("delayTime"));
+                log.info("本次消息延时等级: {}, 延时时长为: {}", messageExt.getDelayTimeLevel(), messageExt.getProperty("delayTime"));
             }
             try {
                 // 线程休眠模拟消费者业务执行

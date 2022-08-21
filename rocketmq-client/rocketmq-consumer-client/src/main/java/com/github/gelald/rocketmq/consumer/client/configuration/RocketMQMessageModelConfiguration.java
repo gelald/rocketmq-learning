@@ -6,6 +6,7 @@ import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-public class RocketMQMessageModelConfiguration extends RocketMQConsumerBaseConfiguration {
-
+@ConditionalOnProperty(prefix = "learning.rocketmq.consumer.consumer-switch", name = "message-model", havingValue = "true")
+public class RocketMQMessageModelConfiguration extends RocketMQBaseConsumerConfiguration {
     /**
      * 集群消费的消费者1
      */
@@ -87,5 +88,4 @@ public class RocketMQMessageModelConfiguration extends RocketMQConsumerBaseConfi
         mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
     }
-
 }

@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @Api(tags = "顺序消息生产者")
 @RequestMapping("/order-producer")
-public class RocketMQOrderProducerController {
+public class OrderProducerController {
 
     private DefaultMQProducer globalMQProducer;
     private DefaultMQProducer partitionedMQProducer;
@@ -106,12 +106,12 @@ public class RocketMQOrderProducerController {
         return "send complete";
     }
 
-    @Autowired
+    @Autowired(required = false)
     public void setDefaultMQProducer(DefaultMQProducer globalMQProducer) {
         this.globalMQProducer = globalMQProducer;
     }
 
-    @Autowired
+    @Autowired(required = false)
     public void setPartitionedMQProducer(DefaultMQProducer partitionedMQProducer) {
         this.partitionedMQProducer = partitionedMQProducer;
     }

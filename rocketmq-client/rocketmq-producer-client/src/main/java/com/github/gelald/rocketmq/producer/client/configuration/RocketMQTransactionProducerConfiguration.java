@@ -20,14 +20,14 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Configuration
-public class RocketMQTransactionProducerConfiguration extends RocketMQProducerBaseConfiguration {
+@ConditionalOnProperty(prefix = "learning.rocketmq.producer.producer-switch", name = "transactional", havingValue = "true")
+public class RocketMQTransactionProducerConfiguration extends RocketMQBaseProducerConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = "learning.rocketmq.producer", value = "type", havingValue = "TRANSACTION")
     public TransactionMQProducer transactionMQProducer() throws MQClientException {
         TransactionMQProducer transactionMQProducer = new TransactionMQProducer();
         transactionMQProducer.setNamesrvAddr(rocketMQProducerProperties.getNameServerAddr());
-        transactionMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client"));
+        transactionMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client-transactional"));
         transactionMQProducer.setTransactionListener(new TransactionListener() {
             @Override
             public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {

@@ -33,7 +33,7 @@ public class GlobalOrderListener implements MessageListenerOrderly {
             if (times < 3) {
                 int number = Integer.parseInt(messageExt.getProperty("number"));
                 if (lastNumber != number && number % 3 == 0) {
-                    log.info("GlobalOrderListener消费消息失败，稍后再消费");
+                    log.info("GlobalOrderListener消费消息失败, 稍后再消费");
                     try {
                         lock.lock();
                         times++;

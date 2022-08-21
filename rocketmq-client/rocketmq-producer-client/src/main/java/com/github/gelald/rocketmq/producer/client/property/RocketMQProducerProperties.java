@@ -1,6 +1,5 @@
 package com.github.gelald.rocketmq.producer.client.property;
 
-import com.github.gelald.rocketmq.common.enums.RocketMQProducerEnum;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -14,17 +13,33 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "learning.rocketmq.producer")
 public class RocketMQProducerProperties {
     /**
-     * 创建哪一种类型的生产者
-     */
-    private RocketMQProducerEnum producerType;
-    /**
      * RocketMQ中NameServer地址
      */
     private String nameServerAddr;
+    /**
+     * 控制其他类型生产者是否创建
+     * 默认的生产者不受控制
+     */
+    private ProducerSwitch producerSwitch;
 
+    @Data
+    private static class ProducerSwitch {
+        /**
+         * 是否创建发送顺序消息的生产者
+         */
+        private Boolean order = false;
+        /**
+         * 是否创建发送事务消息的生产者
+         */
+        private Boolean transactional = false;
 
-    public void setProducerType(RocketMQProducerEnum producerType) {
-        this.producerType = producerType;
+        public void setOrder(Boolean order) {
+            this.order = order;
+        }
+
+        public void setTransactional(Boolean transactional) {
+            this.transactional = transactional;
+        }
     }
 
     public void setNameServerAddr(String nameServerAddr) {

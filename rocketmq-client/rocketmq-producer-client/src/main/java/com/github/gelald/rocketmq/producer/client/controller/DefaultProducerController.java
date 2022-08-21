@@ -1,12 +1,14 @@
 package com.github.gelald.rocketmq.producer.client.controller;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
+import com.github.gelald.rocketmq.producer.client.configuration.RocketMQBaseProducerConfiguration;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * @author WuYingBin
@@ -26,14 +29,14 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @Api(tags = "普通消息生产者")
 @RequestMapping("/mq-producer")
-public class RocketMQDefaultProducerController {
+public class DefaultProducerController {
 
     private DefaultMQProducer defaultMQProducer;
 
     @ApiOperation("同步发送普通消息")
     @GetMapping("/sync-ordinary")
     public SendResult sendOrdinaryMessageSynchronously() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
-        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "sync", "send ordinary message synchronously".getBytes(StandardCharsets.UTF_8));
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "sync", "send ordinary message synchronously".getBytes(StandardCharsets.UTF_8));
         SendResult sendResult = this.defaultMQProducer.send(message);
         return sendResult;
     }
@@ -41,7 +44,7 @@ public class RocketMQDefaultProducerController {
     @ApiOperation("异步发送普通消息")
     @GetMapping("/async-ordinary")
     public String sendOrdinaryMessageAsynchronously() throws RemotingException, InterruptedException, MQClientException {
-        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "async", "send ordinary message asynchronously".getBytes(StandardCharsets.UTF_8));
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "async", "send ordinary message asynchronously".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.send(message, new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
@@ -59,7 +62,7 @@ public class RocketMQDefaultProducerController {
     @ApiOperation("发送单向普通消息")
     @GetMapping("/one-way")
     public String sendSimplexMessage() throws RemotingException, InterruptedException, MQClientException {
-        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "one-way", "send one-way message".getBytes(StandardCharsets.UTF_8));
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "one-way", "send one-way message".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.sendOneway(message);
         return "send complete";
     }
@@ -89,14 +92,21 @@ public class RocketMQDefaultProducerController {
     @ApiOperation("发送延时消息")
     @GetMapping("/delay-message")
     public String sendDelayMessage() throws RemotingException, InterruptedException, MQClientException, MQBrokerException {
-        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "delay", "send third delay level message".getBytes(StandardCharsets.UTF_8));
+        Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "delay", "send third delay level message".getBytes(StandardCharsets.UTF_8));
         message.setDelayTimeLevel(3);
         message.putUserProperty("delayTime", "10秒");
         this.defaultMQProducer.send(message);
         return "send complete";
     }
 
-    @Autowired(required = false)
+    @ApiOperation("查看有多少个生产者被创建了")
+    @GetMapping("/producer-count")
+    public Integer getProducerCount() {
+        List<MQProducer> mqProducers = RocketMQBaseProducerConfiguration.mqProducers;
+        return mqProducers.size();
+    }
+
+    @Autowired
     public void setDefaultMQProducer(DefaultMQProducer defaultMQProducer) {
         this.defaultMQProducer = defaultMQProducer;
     }

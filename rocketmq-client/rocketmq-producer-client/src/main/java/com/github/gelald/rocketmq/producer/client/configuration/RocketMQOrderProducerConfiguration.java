@@ -4,6 +4,7 @@ import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +16,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-public class RocketMQOrderProducerConfiguration extends RocketMQProducerBaseConfiguration {
+@ConditionalOnProperty(prefix = "learning.rocketmq.producer.producer-switch", name = "order", havingValue = "true")
+public class RocketMQOrderProducerConfiguration extends RocketMQBaseProducerConfiguration {
 
     @Bean
     public DefaultMQProducer globalMQProducer() throws MQClientException {

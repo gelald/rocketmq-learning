@@ -12,8 +12,10 @@ spring:
 learning:
   rocketmq:
     producer:
-      producer-type: default
       name-server-addr: localhost:9876
+      producer-switch:
+        order: false
+        transactional: false
 
 base:
   response-body-advice-package: ${base.swagger-package}

@@ -16,23 +16,21 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-public class RocketMQDefaultConsumerConfiguration extends RocketMQConsumerBaseConfiguration {
-
+public class RocketMQDefaultConsumerConfiguration extends RocketMQBaseConsumerConfiguration {
     /**
      * 消费普通消息的消费者
      */
     @Bean
-    public DefaultMQPushConsumer ordinaryConsumer(MessageListenerConcurrently ordinaryListener) throws MQClientException {
+    public DefaultMQPushConsumer defaultMQPushConsumer(MessageListenerConcurrently defaultListener) throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
         defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client"));
         defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "*");
-        defaultMQPushConsumer.setMessageListener(ordinaryListener);
+        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client"), "*");
+        defaultMQPushConsumer.setMessageListener(defaultListener);
         defaultMQPushConsumer.start();
         mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
     }
-
 }
