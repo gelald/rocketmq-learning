@@ -23,8 +23,8 @@ import java.nio.charset.StandardCharsets;
  * Date 2022/7/26
  */
 @Slf4j
-@Api(tags = "消息生产者")
 @RestController
+@Api(tags = "普通消息生产者")
 @RequestMapping("/mq-producer")
 public class RocketMQDefaultProducerController {
 

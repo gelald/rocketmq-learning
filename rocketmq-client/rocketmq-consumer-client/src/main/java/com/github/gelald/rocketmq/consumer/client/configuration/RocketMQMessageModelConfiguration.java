@@ -1,52 +1,23 @@
 package com.github.gelald.rocketmq.consumer.client.configuration;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
-import com.github.gelald.rocketmq.consumer.client.property.RocketMQConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.MQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * 定义测试消费模式的消费者
+ *
  * @author WuYingBin
- * Date 2022/7/26
+ * date: 2022/8/19
  */
 @Slf4j
 @Configuration
-public class RocketMQConsumerConfiguration implements DisposableBean {
-
-    private static final List<MQPushConsumer> mqConsumers = new CopyOnWriteArrayList<>();
-
-    private RocketMQConsumerProperties rocketMQConsumerProperties;
-
-    /**
-     * 消费普通消息的消费者
-     */
-    @Bean
-    public DefaultMQPushConsumer ordinaryConsumer(MessageListenerConcurrently ordinaryListener) throws MQClientException {
-        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
-        defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
-        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client"));
-        defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
-        defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-ordinary"), "*");
-        defaultMQPushConsumer.setMessageListener(ordinaryListener);
-        defaultMQPushConsumer.start();
-        mqConsumers.add(defaultMQPushConsumer);
-        log.info("普通消息消费者创建成功");
-        return defaultMQPushConsumer;
-    }
+public class RocketMQMessageModelConfiguration extends RocketMQConsumerBaseConfiguration {
 
     /**
      * 集群消费的消费者1
@@ -54,7 +25,7 @@ public class RocketMQConsumerConfiguration implements DisposableBean {
     @Bean
     public DefaultMQPushConsumer clusteringMQPushConsumerOne(MessageListenerConcurrently clusteringListenerOne) throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
-        defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
+        defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setInstanceName("clustering-consumer-one");
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-clustering"));
         defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
@@ -72,6 +43,7 @@ public class RocketMQConsumerConfiguration implements DisposableBean {
     public DefaultMQPushConsumer clusteringMQPushConsumerTwo(MessageListenerConcurrently clusteringListenerTwo) throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
         defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
+        // todo org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl.start
         defaultMQPushConsumer.setInstanceName("clustering-consumer-two");
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-clustering"));
         defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
@@ -114,21 +86,6 @@ public class RocketMQConsumerConfiguration implements DisposableBean {
         defaultMQPushConsumer.start();
         mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
-    }
-
-    @Override
-    public void destroy() {
-        if (!CollectionUtils.isEmpty(mqConsumers)) {
-            for (MQPushConsumer mqConsumer : mqConsumers) {
-                mqConsumer.shutdown();
-                log.info("RocketMQ消费者销毁成功");
-            }
-        }
-    }
-
-    @Autowired
-    public void setRocketMQConsumerProperties(RocketMQConsumerProperties rocketMQConsumerProperties) {
-        this.rocketMQConsumerProperties = rocketMQConsumerProperties;
     }
 
 }

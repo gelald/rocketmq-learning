@@ -19,6 +19,8 @@ services:
       - ./rocketmq-broker/logs:/home/rocketmq/logs
       - ./rocketmq-broker/store:/home/rocketmq/store
       - ./rocketmq-broker/conf/broker.conf:/home/rocketmq/rocketmq-4.9.3/conf/broker.conf
+    environment:
+      - JAVA_OPT_EXT=-server -Xms1g -Xmx1g -Xmn512m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m
     command: sh mqbroker -n name-server:9876 -c /home/rocketmq/rocketmq-4.9.3/conf/broker.conf
     depends_on:
       - name-server
