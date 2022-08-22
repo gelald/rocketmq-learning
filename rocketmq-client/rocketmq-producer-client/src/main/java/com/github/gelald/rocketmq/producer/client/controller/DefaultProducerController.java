@@ -116,18 +116,22 @@ public class DefaultProducerController {
     public String tagFilterMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
         // 消费者方设置如下
         // 消费者1只接受tag为phone或shoes的消息
-        // 消费者2只接受tag为phone或clothes，并且price位于[15,20]区间的消息
-        Message tagMessage1 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息-17元".getBytes(StandardCharsets.UTF_8));
-        tagMessage1.putUserProperty("price", "17");
-        this.defaultMQProducer.send(tagMessage1);
-        Message tagMessage2 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息-26元".getBytes(StandardCharsets.UTF_8));
-        tagMessage2.putUserProperty("price", "26");
-        this.defaultMQProducer.send(tagMessage2);
-        Message tagMessage3 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "clothes", "衣服订单消息-19元".getBytes(StandardCharsets.UTF_8));
-        tagMessage3.putUserProperty("price", "19");
-        this.defaultMQProducer.send(tagMessage3);
-        Message tagMessage4 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "shoes", "鞋子订单消息-null".getBytes(StandardCharsets.UTF_8));
-        this.defaultMQProducer.send(tagMessage4);
+        // 消费者2只接受tag为phone或clothes，并且price位于[10,20]区间的消息
+        Message message1 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息:17元".getBytes(StandardCharsets.UTF_8));
+        message1.putUserProperty("price", "17");
+        this.defaultMQProducer.send(message1);
+        log.info("生产者发送消息: {}", message1);
+        Message message2 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息:26元".getBytes(StandardCharsets.UTF_8));
+        message2.putUserProperty("price", "26");
+        this.defaultMQProducer.send(message2);
+        log.info("生产者发送消息: {}", message2);
+        Message message3 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "clothes", "衣服订单消息:19元".getBytes(StandardCharsets.UTF_8));
+        message3.putUserProperty("price", "19");
+        this.defaultMQProducer.send(message3);
+        log.info("生产者发送消息: {}", message3);
+        Message message4 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "shoes", "鞋子订单消息:null".getBytes(StandardCharsets.UTF_8));
+        this.defaultMQProducer.send(message4);
+        log.info("生产者发送消息: {}", message4);
         return "send complete";
     }
 
@@ -136,16 +140,18 @@ public class DefaultProducerController {
     public String sqlFilterMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
         // 消费者方设置如下
         // 只有price在[10-30]区间才能接收并消费
-        // 所以message2无法被消费
-        Message message1 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"), "phone", "手机订单消息-18元".getBytes(StandardCharsets.UTF_8));
+        Message message1 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"), "phone", "手机订单消息:18元".getBytes(StandardCharsets.UTF_8));
         message1.putUserProperty("price", "18");
         this.defaultMQProducer.send(message1);
-        Message message2 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"), "clothes", "衣服订单消息-7元".getBytes(StandardCharsets.UTF_8));
+        log.info("生产者发送消息: {}", message1);
+        Message message2 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"), "clothes", "衣服订单消息:7元".getBytes(StandardCharsets.UTF_8));
         message2.putUserProperty("price", "7");
         this.defaultMQProducer.send(message2);
-        Message message3 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"), "clothes", "衣服订单消息-20元".getBytes(StandardCharsets.UTF_8));
+        log.info("生产者发送消息: {}", message2);
+        Message message3 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"), "clothes", "衣服订单消息:20元".getBytes(StandardCharsets.UTF_8));
         message3.putUserProperty("price", "20");
         this.defaultMQProducer.send(message3);
+        log.info("生产者发送消息: {}", message3);
         return "send complete";
     }
 

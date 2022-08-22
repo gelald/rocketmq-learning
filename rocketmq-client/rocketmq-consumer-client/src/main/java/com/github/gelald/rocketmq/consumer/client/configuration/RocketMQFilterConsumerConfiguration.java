@@ -22,14 +22,14 @@ public class RocketMQFilterConsumerConfiguration extends RocketMQBaseConsumerCon
      * 使用Tag过滤的消费者
      */
     @Bean
-    public DefaultMQPushConsumer tagFilterConsumer(MessageListenerConcurrently defaultListener) throws MQClientException {
+    public DefaultMQPushConsumer tagFilterConsumer(MessageListenerConcurrently tagListenerOne) throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
         defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-tag-filter"));
         defaultMQPushConsumer.setInstanceName("client-tag-tag-filter");
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"),
                 MessageSelector.byTag("phone || shoes"));
-        defaultMQPushConsumer.setMessageListener(defaultListener);
+        defaultMQPushConsumer.setMessageListener(tagListenerOne);
         defaultMQPushConsumer.start();
         mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
@@ -39,14 +39,14 @@ public class RocketMQFilterConsumerConfiguration extends RocketMQBaseConsumerCon
      * 使用SQL过滤的消费者（同一组，测试两个都消费者订阅规则都满足时如何处理）
      */
     @Bean
-    public DefaultMQPushConsumer sqlFilterConsumerSameGroup(MessageListenerConcurrently defaultListener) throws MQClientException {
+    public DefaultMQPushConsumer sqlFilterConsumerSameGroup(MessageListenerConcurrently tagListenerTwo) throws MQClientException {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
         defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-tag-filter"));
         defaultMQPushConsumer.setInstanceName("client-tag-sql-filter");
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"),
-                MessageSelector.bySql("Tags is not null and Tags in ('phone', 'clothes) and price is not null and price between 15 and 20"));
-        defaultMQPushConsumer.setMessageListener(defaultListener);
+                MessageSelector.bySql("(TAGS is not null and TAGS in ('phone', 'clothes')) and (price is not null and price between 10 and 20)"));
+        defaultMQPushConsumer.setMessageListener(tagListenerTwo);
         defaultMQPushConsumer.start();
         mqConsumers.add(defaultMQPushConsumer);
         return defaultMQPushConsumer;
