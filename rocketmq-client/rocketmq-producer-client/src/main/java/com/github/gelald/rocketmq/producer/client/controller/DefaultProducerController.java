@@ -61,7 +61,7 @@ public class DefaultProducerController {
 
     @ApiOperation("发送单向普通消息")
     @GetMapping("/one-way")
-    public String sendSimplexMessage() throws RemotingException, InterruptedException, MQClientException {
+    public String sendOneWayMessage() throws RemotingException, InterruptedException, MQClientException {
         Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "one-way", "send one-way message".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.sendOneway(message);
         return "send complete";
