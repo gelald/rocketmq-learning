@@ -63,6 +63,30 @@ public class RocketMQProducerController {
         return "send successfully";
     }
 
+    @ApiOperation("测试集群消费模式")
+    @GetMapping("/clustering-consume")
+    public String clusteringConsume() {
+        for (int i = 0; i < 20; i++) {
+            String messageBody = "测试集群消费模式第" + (i + 1) + "条消息";
+            Message<String> message = MessageBuilder.withPayload(messageBody).build();
+            log.info("生产者发送消息: {}", message);
+            this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter-clustering"), message);
+        }
+        return "send successfully";
+    }
+
+    @ApiOperation("测试广播消费模式")
+    @GetMapping("/broadcast-consume")
+    public String broadcastConsume() {
+        for (int i = 0; i < 20; i++) {
+            String messageBody = "测试广播消费模式第" + (i + 1) + "条消息";
+            Message<String> message = MessageBuilder.withPayload(messageBody).build();
+            log.info("生产者发送消息: {}", message);
+            this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter-broadcast"), message);
+        }
+        return "send successfully";
+    }
+
 
     @Autowired
     public void setRocketMQTemplate(RocketMQTemplate rocketMQTemplate) {

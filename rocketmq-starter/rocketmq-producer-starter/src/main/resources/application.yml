@@ -11,7 +11,7 @@ spring:
 
 
 rocketmq:
-  name-server: localhost:9876
+  name-server: 192.168.1.112:9876
   producer:
     group: rocketmq-producer-starter
     # 消息发送超时时长，默认3s
