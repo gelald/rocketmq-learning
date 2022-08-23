@@ -15,7 +15,7 @@ learning:
       name-server-addr: localhost:9876
       producer-switch:
         order: false
-        transactional: false
+        transaction: false
 
 base:
   response-body-advice-package: ${base.swagger-package}
