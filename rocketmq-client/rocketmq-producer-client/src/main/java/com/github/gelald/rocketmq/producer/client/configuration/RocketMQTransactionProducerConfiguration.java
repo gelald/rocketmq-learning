@@ -20,24 +20,35 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(prefix = "learning.rocketmq.producer.producer-switch", name = "transactional", havingValue = "true")
+@ConditionalOnProperty(prefix = "learning.rocketmq.producer.producer-switch", name = "transaction", havingValue = "true")
 public class RocketMQTransactionProducerConfiguration extends RocketMQBaseProducerConfiguration {
 
     @Bean
-    public TransactionMQProducer transactionMQProducer() throws MQClientException {
+    public TransactionMQProducer transactionMQProducer(TransactionListener bizTransactionListener) throws MQClientException {
         TransactionMQProducer transactionMQProducer = new TransactionMQProducer();
         transactionMQProducer.setNamesrvAddr(rocketMQProducerProperties.getNameServerAddr());
         transactionMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client-transactional"));
-        transactionMQProducer.setTransactionListener(new TransactionListener() {
+        transactionMQProducer.setTransactionListener(bizTransactionListener);
+        transactionMQProducer.start();
+        mqProducers.add(transactionMQProducer);
+        return transactionMQProducer;
+    }
+
+    @Bean
+    public TransactionListener bizTransactionListener() {
+        return new TransactionListener() {
             @Override
             public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
                 log.info("接收到RocketMQ的Half消息的响应，现在执行本地事务...");
+                int number = Integer.parseInt(msg.getUserProperty("number"));
                 try {
+                    Integer result = 100 / number;
+                    log.info("事务执行结果: {}", result);
                     // 线程睡眠500毫秒模拟本地事务执行
                     TimeUnit.MILLISECONDS.sleep(500);
                     log.info("本地事务执行成功，给RocketMQ发送ACK响应");
                     return LocalTransactionState.COMMIT_MESSAGE;
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     log.info("本地事务执行发生异常，需要回滚事务");
                     return LocalTransactionState.ROLLBACK_MESSAGE;
                 }
@@ -48,10 +59,7 @@ public class RocketMQTransactionProducerConfiguration extends RocketMQBaseProduc
                 log.info("由于RocketMQ长时间无法收到消息的状态或本地执行事务状态为UNKNOW，现在执行补偿事务/回查本地事务...");
                 return LocalTransactionState.COMMIT_MESSAGE;
             }
-        });
-        transactionMQProducer.start();
-        mqProducers.add(transactionMQProducer);
-        return transactionMQProducer;
+        };
     }
 
 }

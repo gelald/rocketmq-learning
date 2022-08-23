@@ -10,6 +10,7 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -107,11 +108,13 @@ public class OrderProducerController {
     }
 
     @Autowired(required = false)
-    public void setDefaultMQProducer(DefaultMQProducer globalMQProducer) {
+    @Qualifier("globalMQProducer")
+    public void setGlobalMQProducer(DefaultMQProducer globalMQProducer) {
         this.globalMQProducer = globalMQProducer;
     }
 
     @Autowired(required = false)
+    @Qualifier("partitionedMQProducer")
     public void setPartitionedMQProducer(DefaultMQProducer partitionedMQProducer) {
         this.partitionedMQProducer = partitionedMQProducer;
     }

@@ -31,15 +31,7 @@ public class RocketMQProducerProperties {
         /**
          * 是否创建发送事务消息的生产者
          */
-        private Boolean transactional = false;
-
-        public void setOrder(Boolean order) {
-            this.order = order;
-        }
-
-        public void setTransactional(Boolean transactional) {
-            this.transactional = transactional;
-        }
+        private Boolean transaction = false;
     }
 
     public void setNameServerAddr(String nameServerAddr) {

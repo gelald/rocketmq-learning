@@ -43,6 +43,6 @@ public class RocketMQConsumerProperties {
         /**
          * 是否创建发送事务消息的消费者
          */
-        private Boolean transactional = false;
+        private Boolean transaction = false;
     }
 }
