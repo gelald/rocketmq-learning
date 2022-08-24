@@ -4,16 +4,21 @@ import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.exception.MQBrokerException;
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,6 +154,43 @@ public class RocketMQProducerController {
         SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:batch"), messages);
         log.info("消息发送状态: {}", sendResult);
         return sendResult;
+    }
+
+    @ApiOperation("测试tag过滤消息")
+    @GetMapping("/tag-filter-message")
+    public String tagFilterMessage() {
+        // 消费者方设置如下
+        // 消费者只接受tag为phone或clothes的消息
+        Message<String> message1 = MessageBuilder.withPayload("订单1").build();
+        log.info("生产者发送消息: {}", message1);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-tag-filter:phone"), message1);
+        Message<String> message2 = MessageBuilder.withPayload("订单2").build();
+        log.info("生产者发送消息: {}", message2);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-tag-filter:shoes"), message2);
+        Message<String> message3 = MessageBuilder.withPayload("订单3").build();
+        log.info("生产者发送消息: {}", message3);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-tag-filter:clothes"), message3);
+        return "send complete";
+    }
+
+    @ApiOperation("测试sql过滤消息")
+    @GetMapping("/sql-filter-message")
+    public String sqlFilterMessage() {
+        // 消费者方设置如下
+        // 消费者只接受tag为phone而且price在[400-500]区间的消息
+        Message<String> message1 = MessageBuilder.withPayload("订单1").setHeader("price", 600).build();
+        log.info("生产者发送消息: {}", message1);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message1);
+        Message<String> message2 = MessageBuilder.withPayload("订单2").setHeader("price", 420).build();
+        log.info("生产者发送消息: {}", message2);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message1);
+        Message<String> message3 = MessageBuilder.withPayload("订单3").setHeader("price", 480).build();
+        log.info("生产者发送消息: {}", message3);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter"), message1);
+        Message<String> message4 = MessageBuilder.withPayload("订单4").setHeader("price", 500).build();
+        log.info("生产者发送消息: {}", message4);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message4);
+        return "send complete";
     }
 
 
