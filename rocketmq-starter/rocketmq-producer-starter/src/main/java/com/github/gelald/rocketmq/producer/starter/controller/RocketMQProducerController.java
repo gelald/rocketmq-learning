@@ -4,21 +4,18 @@ import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.exception.MQBrokerException;
-import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.remoting.exception.RemotingException;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -193,6 +190,16 @@ public class RocketMQProducerController {
         return "send complete";
     }
 
+    @ApiOperation("发送事务消息")
+    @GetMapping("/transaction/{number}")
+    public TransactionSendResult sendTransactionMessage(@PathVariable Integer number) {
+        log.info("接收到事务请求，准备执行生产者本地事务...");
+        Message<String> message = MessageBuilder.withPayload("通知消费者执行本地事务的事务消息").build();
+        TransactionSendResult transactionSendResult = this.rocketMQTemplate.sendMessageInTransaction((RocketMQConstant.TOPIC_PREFIX + "starter-transaction"), message, number);
+        log.info("生产者发送状态: {}", transactionSendResult.getSendStatus().toString());
+        log.info("本地事务执行结果: {}", transactionSendResult.getLocalTransactionState().toString());
+        return transactionSendResult;
+    }
 
     @Autowired
     public void setRocketMQTemplate(RocketMQTemplate rocketMQTemplate) {
