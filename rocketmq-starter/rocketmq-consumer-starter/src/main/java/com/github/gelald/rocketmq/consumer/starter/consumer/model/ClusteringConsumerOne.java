@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class ClusteringConsumerOne implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Override
     public void onMessage(String message) {
-        log.info("ClusteringListenerOne接收到消息, 消息内容: {}", message);
+        log.info("ClusteringConsumerOne接收到消息, 消息内容: {}", message);
     }
 
     @Override
