@@ -27,31 +27,30 @@ public class GlobalOrderListener implements MessageListenerOrderly {
 
     @Override
     public ConsumeOrderlyStatus consumeMessage(List<MessageExt> messageExtList, ConsumeOrderlyContext context) {
-        // 能保证每次只有一条消息，可以把return语句放到for循环内
-        for (MessageExt messageExt : messageExtList) {
-            String body = new String(messageExt.getBody(), StandardCharsets.UTF_8);
-            if (times < 3) {
-                int number = Integer.parseInt(messageExt.getProperty("number"));
-                if (lastNumber != number && number % 3 == 0) {
-                    log.info("GlobalOrderListener消费消息失败, 稍后再消费");
-                    try {
-                        lock.lock();
-                        times++;
-                        lastNumber = number;
-                    } finally {
-                        lock.unlock();
-                    }
-                    return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
-                } else {
-                    log.info("GlobalOrderListener成功消费消息: {}", body);
-                    return ConsumeOrderlyStatus.SUCCESS;
+        // 能保证每次只有一条消息
+        MessageExt messageExt = messageExtList.get(0);
+        String body = new String(messageExt.getBody(), StandardCharsets.UTF_8);
+        if (times < 3) {
+            int number = Integer.parseInt(messageExt.getProperty("number"));
+            // 如果是3的倍数且失败次数还没达到，那么手动让本次消息消费失败
+            if (lastNumber != number && number % 3 == 0) {
+                log.info("GlobalOrderListener消费消息失败, 稍后再消费");
+                try {
+                    lock.lock();
+                    times++;
+                    lastNumber = number;
+                } finally {
+                    lock.unlock();
                 }
+                return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
             } else {
                 log.info("GlobalOrderListener成功消费消息: {}", body);
                 return ConsumeOrderlyStatus.SUCCESS;
             }
+        } else {
+            log.info("GlobalOrderListener成功消费消息: {}", body);
+            return ConsumeOrderlyStatus.SUCCESS;
         }
-        return ConsumeOrderlyStatus.SUCCESS;
     }
 
 }

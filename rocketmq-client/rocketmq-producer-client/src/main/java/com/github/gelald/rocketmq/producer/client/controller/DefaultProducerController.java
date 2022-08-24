@@ -37,7 +37,7 @@ public class DefaultProducerController {
     public SendResult sendOrdinaryMessageSynchronously() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
         Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "sync", "send ordinary message synchronously".getBytes(StandardCharsets.UTF_8));
         SendResult sendResult = this.defaultMQProducer.send(message);
-        log.info("消息发送成功: {}", sendResult.toString());
+        log.info("消息发送状态: {}", sendResult);
         return sendResult;
     }
 

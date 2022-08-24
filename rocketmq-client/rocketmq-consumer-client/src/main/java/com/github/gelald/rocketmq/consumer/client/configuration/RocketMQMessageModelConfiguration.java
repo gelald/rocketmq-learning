@@ -29,6 +29,7 @@ public class RocketMQMessageModelConfiguration extends RocketMQBaseConsumerConfi
         defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setInstanceName("clustering-consumer-one");
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-clustering"));
+        // 设置消费模式，默认是集群消费模式
         defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-clustering"), "*");
         defaultMQPushConsumer.setMessageListener(clusteringListenerOne);
@@ -47,6 +48,7 @@ public class RocketMQMessageModelConfiguration extends RocketMQBaseConsumerConfi
         // todo org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl.start
         defaultMQPushConsumer.setInstanceName("clustering-consumer-two");
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-clustering"));
+        // 设置消费模式，默认是集群消费模式
         defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-clustering"), "*");
         defaultMQPushConsumer.setMessageListener(clusteringListenerTwo);
@@ -64,6 +66,7 @@ public class RocketMQMessageModelConfiguration extends RocketMQBaseConsumerConfi
         defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setInstanceName("broadcast-consumer-one");
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-broadcast"));
+        // 设置消费模式，默认是集群消费模式
         defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-broadcast"), "*");
         defaultMQPushConsumer.setMessageListener(broadcastListenerOne);
@@ -81,6 +84,7 @@ public class RocketMQMessageModelConfiguration extends RocketMQBaseConsumerConfi
         defaultMQPushConsumer.setNamesrvAddr(this.rocketMQConsumerProperties.getNameServerAddr());
         defaultMQPushConsumer.setInstanceName("broadcast-consumer-two");
         defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-broadcast"));
+        // 设置消费模式，默认是集群消费模式
         defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
         defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-broadcast"), "*");
         defaultMQPushConsumer.setMessageListener(broadcastListenerTwo);

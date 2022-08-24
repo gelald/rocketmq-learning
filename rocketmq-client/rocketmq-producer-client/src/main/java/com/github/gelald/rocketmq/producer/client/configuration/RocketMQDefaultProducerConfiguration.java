@@ -16,10 +16,15 @@ import org.springframework.context.annotation.Configuration;
 public class RocketMQDefaultProducerConfiguration extends RocketMQBaseProducerConfiguration {
     @Bean
     public DefaultMQProducer defaultMQProducer() throws MQClientException {
+        // 创建消息生产者
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer();
+        // 设置生产者NameServer地址，用于寻找Broker
         defaultMQProducer.setNamesrvAddr(rocketMQProducerProperties.getNameServerAddr());
+        // 设置生产者组
         defaultMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client"));
+        // 启动生产者组
         defaultMQProducer.start();
+        // 把创建的生产者放到一个集合，当程序结束时统一销毁
         mqProducers.add(defaultMQProducer);
         return defaultMQProducer;
     }

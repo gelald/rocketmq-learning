@@ -24,6 +24,7 @@ public class RocketMQOrderProducerConfiguration extends RocketMQBaseProducerConf
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer();
         defaultMQProducer.setNamesrvAddr(rocketMQProducerProperties.getNameServerAddr());
         defaultMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client-global-order"));
+        // 全局有序消息，生产者只定义一个队列
         defaultMQProducer.setDefaultTopicQueueNums(1);
         defaultMQProducer.start();
         mqProducers.add(defaultMQProducer);
