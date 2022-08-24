@@ -123,6 +123,16 @@ public class RocketMQProducerController {
         return "send successfully";
     }
 
+    @ApiOperation("发送延时消息")
+    @GetMapping("/delay")
+    public SendResult sendDelayMessage() {
+        Message<String> message = MessageBuilder.withPayload("send delay message").build();
+        log.info("生产者发送消息: {}", message);
+        SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:delay"), message, 3000, 2);
+        log.info("消息发送状态: {}", sendResult);
+        return sendResult;
+    }
+
 
     @Autowired
     public void setRocketMQTemplate(RocketMQTemplate rocketMQTemplate) {
