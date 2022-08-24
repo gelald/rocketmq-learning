@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author WuYingBin
  * Date 2022/7/26
@@ -129,6 +132,21 @@ public class RocketMQProducerController {
         Message<String> message = MessageBuilder.withPayload("send delay message").build();
         log.info("生产者发送消息: {}", message);
         SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:delay"), message, 3000, 2);
+        log.info("消息发送状态: {}", sendResult);
+        return sendResult;
+    }
+
+    @ApiOperation("批量发送消息")
+    @GetMapping("/batch")
+    public SendResult sendMessageInBatch() {
+        List<Message<String>> messages = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            String messageBody = "批量发送消息第" + i + "条";
+            Message<String> message = MessageBuilder.withPayload(messageBody).build();
+            messages.add(message);
+            log.info("生产者发送消息: {}", message);
+        }
+        SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:batch"), messages);
         log.info("消息发送状态: {}", sendResult);
         return sendResult;
     }
