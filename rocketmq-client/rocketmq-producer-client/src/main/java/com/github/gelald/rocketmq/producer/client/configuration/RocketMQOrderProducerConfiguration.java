@@ -36,6 +36,7 @@ public class RocketMQOrderProducerConfiguration extends RocketMQBaseProducerConf
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer();
         defaultMQProducer.setNamesrvAddr(rocketMQProducerProperties.getNameServerAddr());
         defaultMQProducer.setProducerGroup((RocketMQConstant.PRODUCER_GROUP_PREFIX + "client-partitioned-order"));
+        // 由于消费者方定义了两个消费者来演示此功能，因此定义两个队列来对应两个消费者
         defaultMQProducer.setDefaultTopicQueueNums(2);
         defaultMQProducer.start();
         mqProducers.add(defaultMQProducer);

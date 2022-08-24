@@ -12,6 +12,7 @@ import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -101,35 +102,43 @@ public class DefaultProducerController {
 
     @ApiOperation("批量发送消息")
     @GetMapping("/batch-message")
-    public SendResult sendBatchMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
-        List<Message> messages = new ArrayList<>(10);
-        for (int i = 1; i <= 10; i++) {
+    public String sendBatchMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
+        List<Message> messages = new ArrayList<>(3);
+        for (int i = 1; i <= 20; i++) {
             String messageBody = "测试批量发送消息第" + i + "条消息";
             Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "batch", messageBody.getBytes(StandardCharsets.UTF_8));
             messages.add(message);
+            // 3条为一批消息
+            if (messages.size() == 3) {
+                log.info("生产者发送消息");
+                this.defaultMQProducer.send(messages);
+                // 发送完消息需要清空集合
+                messages.clear();
+            }
         }
-        return this.defaultMQProducer.send(messages);
+        if (!CollectionUtils.isEmpty(messages)) {
+            // 如果遍历结束后集合还有内容，那么也需要把剩下的消息发送
+            log.info("生产者发送消息");
+            this.defaultMQProducer.send(messages);
+        }
+        return "send complete";
     }
 
     @ApiOperation("测试tag过滤消息")
     @GetMapping("/tag-filter-message")
     public String tagFilterMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
         // 消费者方设置如下
-        // 消费者1只接受tag为phone或shoes的消息
-        // 消费者2只接受tag为phone或clothes，并且price位于[10,20]区间的消息
-        Message message1 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息:17元".getBytes(StandardCharsets.UTF_8));
-        message1.putUserProperty("price", "17");
+        // 消费者只接受tag为phone或shoes的消息
+        Message message1 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.send(message1);
         log.info("生产者发送消息: {}", message1);
-        Message message2 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息:26元".getBytes(StandardCharsets.UTF_8));
-        message2.putUserProperty("price", "26");
+        Message message2 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "phone", "手机订单消息".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.send(message2);
         log.info("生产者发送消息: {}", message2);
-        Message message3 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "clothes", "衣服订单消息:19元".getBytes(StandardCharsets.UTF_8));
-        message3.putUserProperty("price", "19");
+        Message message3 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "clothes", "衣服订单消息".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.send(message3);
         log.info("生产者发送消息: {}", message3);
-        Message message4 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "shoes", "鞋子订单消息:null".getBytes(StandardCharsets.UTF_8));
+        Message message4 = new Message((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"), "shoes", "鞋子订单消息".getBytes(StandardCharsets.UTF_8));
         this.defaultMQProducer.send(message4);
         log.info("生产者发送消息: {}", message4);
         return "send complete";
