@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 @RocketMQMessageListener(
         consumerGroup = (RocketMQConstant.CONSUMER_GROUP_PREFIX + "starter-clustering"),
         topic = (RocketMQConstant.TOPIC_PREFIX + "starter-clustering"),
+        // 设置消费模式为集群消费
         messageModel = MessageModel.CLUSTERING
 )
 public class ClusteringConsumerOne implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {

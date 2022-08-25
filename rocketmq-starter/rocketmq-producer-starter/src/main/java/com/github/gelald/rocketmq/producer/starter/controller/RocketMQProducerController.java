@@ -36,7 +36,7 @@ public class RocketMQProducerController {
         Message<String> message = MessageBuilder.withPayload("send ordinary message synchronously").build();
         log.info("生产者发送消息: {}", message);
         SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:sync"), message);
-        log.info("消息发送成功: {}", sendResult);
+        log.info("消息发送状态: {}", sendResult);
         return sendResult;
     }
 
@@ -47,7 +47,7 @@ public class RocketMQProducerController {
         this.rocketMQTemplate.asyncSend((RocketMQConstant.TOPIC_PREFIX + "starter:async"), message, new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
-                log.info("消息发送成功: {}", sendResult);
+                log.info("消息发送状态: {}", sendResult);
             }
 
             @Override
@@ -56,7 +56,7 @@ public class RocketMQProducerController {
             }
         });
         log.info("生产者发送消息: {}", message);
-        return "send successfully";
+        return "sent message";
     }
 
     @ApiOperation("发送单向普通消息")
@@ -65,7 +65,7 @@ public class RocketMQProducerController {
         Message<String> message = MessageBuilder.withPayload("send one-way message").build();
         log.info("生产者发送消息: {}", message);
         this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter:one-way"), message);
-        return "send successfully";
+        return "sent message";
     }
 
     @ApiOperation("测试集群消费模式")
@@ -77,7 +77,7 @@ public class RocketMQProducerController {
             log.info("生产者发送消息: {}", message);
             this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter-clustering"), message);
         }
-        return "send successfully";
+        return "sent message";
     }
 
     @ApiOperation("测试广播消费模式")
@@ -89,7 +89,7 @@ public class RocketMQProducerController {
             log.info("生产者发送消息: {}", message);
             this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter-broadcast"), message);
         }
-        return "send successfully";
+        return "sent message";
     }
 
     @ApiOperation("测试全局有序消息")
@@ -101,7 +101,7 @@ public class RocketMQProducerController {
             log.info("生产者发送消息: {}", message);
             this.rocketMQTemplate.sendOneWayOrderly((RocketMQConstant.TOPIC_PREFIX + "starter-global-order"), message, "123");
         }
-        return "send successfully";
+        return "sent message";
     }
 
     @ApiOperation("测试分区有序消息")
@@ -125,7 +125,7 @@ public class RocketMQProducerController {
         Message<String> message6 = MessageBuilder.withPayload("订单2发货").build();
         log.info("生产者发送消息: {}", message6);
         this.rocketMQTemplate.sendOneWayOrderly((RocketMQConstant.TOPIC_PREFIX + "starter-partitioned-order"), message6, "222");
-        return "send successfully";
+        return "sent message";
     }
 
     @ApiOperation("发送延时消息")
@@ -167,7 +167,7 @@ public class RocketMQProducerController {
         Message<String> message3 = MessageBuilder.withPayload("订单3").build();
         log.info("生产者发送消息: {}", message3);
         this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-tag-filter:clothes"), message3);
-        return "send complete";
+        return "sent message";
     }
 
     @ApiOperation("测试sql过滤消息")
@@ -187,7 +187,7 @@ public class RocketMQProducerController {
         Message<String> message4 = MessageBuilder.withPayload("订单4").setHeader("price", 500).build();
         log.info("生产者发送消息: {}", message4);
         this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message4);
-        return "send complete";
+        return "sent message";
     }
 
     @ApiOperation("发送事务消息")

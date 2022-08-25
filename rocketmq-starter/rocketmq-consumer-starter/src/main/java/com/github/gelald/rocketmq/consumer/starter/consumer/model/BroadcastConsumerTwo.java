@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 @RocketMQMessageListener(
         consumerGroup = (RocketMQConstant.CONSUMER_GROUP_PREFIX + "starter-broadcast"),
         topic = (RocketMQConstant.TOPIC_PREFIX + "starter-broadcast"),
+        // 设置消费模式为广播消费
         messageModel = MessageModel.BROADCASTING
 )
 public class BroadcastConsumerTwo implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
