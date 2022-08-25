@@ -32,9 +32,7 @@ public class TransactionProducerController {
     public String sendTransactionMessage(@PathVariable Integer number) throws MQClientException {
         log.info("接收到事务请求，准备执行生产者本地事务...");
         Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client-transaction"), "通知消费者执行本地事务的事务消息".getBytes(StandardCharsets.UTF_8));
-        message.putUserProperty("number", number.toString());
-        this.transactionMQProducer.sendMessageInTransaction(message, null);
-        log.info("事务型生产者发送消息: {}", message);
+        this.transactionMQProducer.sendMessageInTransaction(message, number);
         return "事务消息发送成功";
     }
 
