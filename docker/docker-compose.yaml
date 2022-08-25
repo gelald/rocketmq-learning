@@ -6,7 +6,7 @@ services:
     ports:
       - "9876:9876"
     volumes:
-      - ./rocketmq-name-server/logs:/home/rocketmq/logs
+      - $PWD/rocketmq-name-server/logs:/home/rocketmq/logs
     command: sh mqnamesrv
   broker:
     image: apache/rocketmq:4.9.3
@@ -16,15 +16,13 @@ services:
       - "10911:10911"
       - "10912:10912"
     volumes:
-      - ./rocketmq-broker/logs:/home/rocketmq/logs
-      - ./rocketmq-broker/store:/home/rocketmq/store
-      - ./rocketmq-broker/conf/broker.conf:/home/rocketmq/rocketmq-4.9.3/conf/broker.conf
+      - $PWD/rocketmq-broker/logs:/home/rocketmq/logs
+      - $PWD/rocketmq-broker/store:/home/rocketmq/store
+      - $PWD/rocketmq-broker/conf/broker.conf:/home/rocketmq/rocketmq-4.9.3/conf/broker.conf
     environment:
       - JAVA_OPT_EXT=-server -Xms1g -Xmx1g -Xmn512m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m
     command: sh mqbroker -n name-server:9876 -c /home/rocketmq/rocketmq-4.9.3/conf/broker.conf
     depends_on:
-      - name-server
-    links:
       - name-server
   dashboard:
     image: apacherocketmq/rocketmq-dashboard:1.0.0
@@ -34,8 +32,6 @@ services:
     environment:
       - JAVA_OPTS=-Drocketmq.namesrv.addr=name-server:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
     volumes:
-      - ./rocketmq-dashboard/tmp:/tmp
+      - $PWD/rocketmq-dashboard/tmp:/tmp
     depends_on:
-      - name-server
-    links:
       - name-server
