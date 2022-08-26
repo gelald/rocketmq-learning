@@ -99,6 +99,7 @@ public class RocketMQProducerController {
             String messageBody = "测试全局有序消息第" + (i + 1) + "条消息";
             Message<String> message = MessageBuilder.withPayload(messageBody).build();
             log.info("生产者发送消息: {}", message);
+            // 传入hashKey来指定具体的一个队列
             this.rocketMQTemplate.sendOneWayOrderly((RocketMQConstant.TOPIC_PREFIX + "starter-global-order"), message, "123");
         }
         return "sent message";
