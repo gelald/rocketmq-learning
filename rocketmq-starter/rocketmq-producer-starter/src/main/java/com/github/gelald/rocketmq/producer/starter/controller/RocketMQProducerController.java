@@ -189,10 +189,10 @@ public class RocketMQProducerController {
         this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message1);
         Message<String> message2 = MessageBuilder.withPayload("订单2").setHeader("price", 420).build();
         log.info("生产者发送消息: {}", message2);
-        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message1);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message2);
         Message<String> message3 = MessageBuilder.withPayload("订单3").setHeader("price", 480).build();
         log.info("生产者发送消息: {}", message3);
-        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter"), message1);
+        this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter"), message3);
         Message<String> message4 = MessageBuilder.withPayload("订单4").setHeader("price", 500).build();
         log.info("生产者发送消息: {}", message4);
         this.rocketMQTemplate.sendOneWay((RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter:phone"), message4);

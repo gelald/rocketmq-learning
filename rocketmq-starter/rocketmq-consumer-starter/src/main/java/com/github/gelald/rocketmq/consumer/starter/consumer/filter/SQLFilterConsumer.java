@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
         consumerGroup = (RocketMQConstant.CONSUMER_GROUP_PREFIX + "starter-sql-filter"),
         topic = (RocketMQConstant.TOPIC_PREFIX + "starter-sql-filter"),
         selectorType = SelectorType.SQL92,
-        selectorExpression = "(TAGS is not null and TAGS == 'phone') and (price between 400 and 500)"
+        selectorExpression = "(TAGS is not null and TAGS = 'phone') and (price between 400 and 500)"
 )
 public class SQLFilterConsumer implements RocketMQListener<MessageExt> {
     @Override

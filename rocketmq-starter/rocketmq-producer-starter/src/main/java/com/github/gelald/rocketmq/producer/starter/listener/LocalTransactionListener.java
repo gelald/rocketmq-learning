@@ -20,6 +20,7 @@ public class LocalTransactionListener implements RocketMQLocalTransactionListene
         log.info("接收到RocketMQ的Half消息的响应，现在执行本地事务...");
         int number = (Integer) arg;
         try {
+            // 使用除法方便演示事务异常
             Integer result = 100 / number;
             log.info("事务执行结果: {}", result);
             // 线程睡眠500毫秒模拟本地事务执行
@@ -37,5 +38,4 @@ public class LocalTransactionListener implements RocketMQLocalTransactionListene
         log.info("由于RocketMQ长时间无法收到消息的状态或本地执行事务状态为UNKNOW，现在执行补偿事务/回查本地事务...");
         return RocketMQLocalTransactionState.COMMIT;
     }
-
 }
