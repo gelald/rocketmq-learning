@@ -1,6 +1,7 @@
 package com.github.gelald.rocketmq.producer.starter.controller;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
+import com.github.gelald.rocketmq.producer.starter.MessagesSplitter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -141,7 +142,7 @@ public class RocketMQProducerController {
 
     @ApiOperation("批量发送消息")
     @GetMapping("/batch")
-    public SendResult sendMessageInBatch() {
+    public String sendMessageInBatch() {
         List<Message<String>> messages = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             String messageBody = "批量发送消息第" + i + "条";
@@ -149,9 +150,16 @@ public class RocketMQProducerController {
             messages.add(message);
             log.info("生产者发送消息: {}", message);
         }
-        SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:batch"), messages);
-        log.info("消息发送状态: {}", sendResult);
-        return sendResult;
+
+        // 可能这个消息集合超出限制，需要将其分裂成若干个满足要求的小消息
+        MessagesSplitter messagesSplitter = new MessagesSplitter(messages);
+        while (messagesSplitter.hasNext()) {
+            List<Message<String>> subMessageList = messagesSplitter.next();
+            SendResult sendResult = this.rocketMQTemplate.syncSend((RocketMQConstant.TOPIC_PREFIX + "starter:batch"), subMessageList);
+            log.info("消息发送状态: {}", sendResult);
+
+        }
+        return "sent message";
     }
 
     @ApiOperation("测试tag过滤消息")
