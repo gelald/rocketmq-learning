@@ -4,6 +4,7 @@ import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
         consumerGroup = (RocketMQConstant.CONSUMER_GROUP_PREFIX + "starter-transaction"),
         topic = (RocketMQConstant.TOPIC_PREFIX + "starter-transaction")
 )
+@ConditionalOnProperty(prefix = "learning.rocketmq.consumer.consumer-switch", name = "transaction", havingValue = "true")
 public class TransactionConsumer implements RocketMQListener<String> {
     @Override
     public void onMessage(String message) {

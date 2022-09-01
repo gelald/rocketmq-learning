@@ -11,3 +11,12 @@ spring:
 
 rocketmq:
   name-server: localhost:9876
+
+learning:
+  rocketmq:
+    consumer:
+      consumer-switch:
+        order: false
+        message-model: false
+        filter: false
+        transaction: false

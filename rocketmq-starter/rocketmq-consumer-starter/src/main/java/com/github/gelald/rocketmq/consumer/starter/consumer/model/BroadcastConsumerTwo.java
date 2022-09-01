@@ -7,6 +7,7 @@ import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
         // 设置消费模式为广播消费
         messageModel = MessageModel.BROADCASTING
 )
+@ConditionalOnProperty(prefix = "learning.rocketmq.consumer.consumer-switch", name = "message-model", havingValue = "true")
 public class BroadcastConsumerTwo implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Override
     public void onMessage(String message) {

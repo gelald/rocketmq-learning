@@ -7,6 +7,7 @@ import org.apache.rocketmq.spring.annotation.ConsumeMode;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
         topic = (RocketMQConstant.TOPIC_PREFIX + "starter-partitioned-order"),
         consumeMode = ConsumeMode.ORDERLY
 )
+@ConditionalOnProperty(prefix = "learning.rocketmq.consumer.consumer-switch", name = "order", havingValue = "true")
 public class PartitionedConsumerTwo implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Override
     public void onMessage(String message) {
