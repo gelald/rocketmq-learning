@@ -21,7 +21,6 @@
         <spring.boot.version>2.6.1</spring.boot.version>
         <rocketmq-client.version>4.9.3</rocketmq-client.version>
         <rocketmq-boot.version>2.2.2</rocketmq-boot.version>
-        <rocketmq-stream.version>2.2.6.RELEASE</rocketmq-stream.version>
     </properties>
 
     <dependencyManagement>
