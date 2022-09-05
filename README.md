@@ -77,19 +77,15 @@ RocketMQ 部署方式官网中提供了源码部署方式，我们这里使用 d
 
 ### rocketmq-client
 
-集成 `rocketmq-client` 的落地实现讲解：
-
-#### rocketmq-producer-client
-
-定义生产者的配置类都需要继承基类 `RocketMQBaseProducerConfiguration`，并且在定义时都需要把定义出来的生产者加入到基类中管理生产者的 `mqProducers` 集合中。这样做的目的是基类实现了 `DisposableBean` 这个后置处理器，在销毁 Bean 的时候先把集合中所有的生产者都逐一销毁，以便释放资源。
-
-除了默认的生产者，顺序消息生产者和事务消息生产者支持开关配置，配置项可以参考 `RocketMQProducerProperties.ProducerSwitch`
+可以配合集成 `rocketmq-client` 的落地实现讲解来一起学习：[RocketMQ 操作落地 (rocketmq-client 方式)](https://gelald.github.io/javrin/writings/message-queue/RocketMQ-operation-client.html)
 
 #### rocketmq-consumer-client
 
-与生产者类似，定义消费者的配置类也要继承基类 `RocketMQBaseConsumerConfiguration`，并且定义时也需要将其加入到 `mqConsumers` 集合中。
+定义消费者的配置类都需要继承基类 `RocketMQBaseConsumerConfiguration`，并且在定义时都需要把定义出来的生产者加入到基类中管理消费者的 `mqConsumers` 集合中。这样做的目的是基类实现了 `DisposableBean` 这个后置处理器，在销毁 Bean 的时候先把集合中所有的生产者都逐一销毁，以便释放资源。
 
 消费者与消息监听器的定义分离，方便独立维护，每一个消费者定义时都要传入特定的一个消息监听器，传入的监听器变量名为监听器类名**首字母小写**，这样 Spring 可以根据名字寻找具体的 Bean 注入。
+
+例如：
 ```
 @Bean
 public DefaultMQPushConsumer defaultMQPushConsumer(MessageListenerConcurrently defaultListener) throws MQClientException {
@@ -97,4 +93,34 @@ public DefaultMQPushConsumer defaultMQPushConsumer(MessageListenerConcurrently d
 }
 ```
 
-除了默认的消费者，其他记录在 `RocketMQConsumerProperties.ConsumerSwitch` 类型的消费者都像生产者一样支持开关配置。
+除了默认的消费者，其他记录在 `RocketMQConsumerProperties.ConsumerSwitch` 类型的消费者支持开关配置，开关配置是为了不启动所有的消费者以便节省资源，当然全部设置为 `true` 也是能正常启动的。
+
+#### rocketmq-producer-client
+
+与消费者一致，定义生产者的配置类也需要继承基类 `RocketMQBaseProducerConfiguration`，并且在定义时也需要把生产者加入 `mqProducers` 集合中。
+
+除了默认的生产者，顺序消息生产者和事务消息生产者支持开关配置，配置项可以参考 `RocketMQProducerProperties.ProducerSwitch`，全部设置为 `true` 也是可以正常启动的。
+
+为了方便大家学习调试，本项目集成了 knife4j 文档组件，直接打开 localhost:9091/doc.html 就能进行调试了，正常启动后的界面：
+
+![](https://wingbun-notes-image.oss-cn-guangzhou.aliyuncs.com/images/20220905161550.png)
+
+### rocketmq-starter
+
+可以配合集成 `rocketmq-spring-boot-starter` 的落地实现讲解来一起学习：[RocketMQ 操作落地 (rocketmq-starter 方式)](https://gelald.github.io/javrin/writings/message-queue/RocketMQ-operation-starter.html)
+
+#### rocketmq-consumer-starter
+
+使用这种集成方式定义消费者变得非常简单，直接使用注解 `@RocketMQMessageListener`，另外如果同一个组要定义多个消费者实例，那么需要实现接口 `RocketMQPushConsumerLifecycleListener` 来修改实例名。
+
+除了默认的消费者，其他记录在 `RocketMQConsumerProperties.ConsumerSwitch` 类型的消费者支持开关配置，开关配置是为了不启动所有的消费者以便节省资源，当然全部设置为 `true` 也是能正常启动的。
+
+#### rocketmq-producer-starter
+
+使用这种集成方式后，直接使用框架中定义好的生产者就可以了，非常方便。
+
+其中 `LocalTransactionListener` 是生产者事务消息监听器，负责执行本地事务以及提供事务回查。
+
+为了方便大家学习调试，本项目集成了 knife4j 文档组件，直接打开 localhost:9093/doc.html 就能进行调试了，正常启动后的界面：
+
+![](https://wingbun-notes-image.oss-cn-guangzhou.aliyuncs.com/images/20220905165851.png)
