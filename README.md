@@ -48,7 +48,8 @@ RocketMQ 部署方式官网中提供了源码部署方式，我们这里使用 d
 在 rocketmq-learning 下有一个目录 docker，这个目录下包含了：
 
 - docker-compose.yaml：docker compose 配置文件，里面已经编辑好 name-server、broker、dashboard 三个容器启动的相关配置
-- rocketmq-broker：broker 容器中挂载的目录，其中 conf 目录下是 broker 的启动配置，启动时需要修改其中的 brokerIP1 为本机 IP 地址
+- rocketmq-broker：broker 容器中挂载的目录，其中 conf 目录下是 broker 的启动配置，启动时需要修改其中的 brokerIP1 为本机 IP
+  地址
 - rocketmq-dashboard：dashboard 容器中挂载的目录
 - rocketmq-name-server：name-server 容器中挂载的目录
 
@@ -56,7 +57,12 @@ RocketMQ 部署方式官网中提供了源码部署方式，我们这里使用 d
 
 验证是否启动成功：输入命令 `docker-compose ps` 可以看到 name-server、broker、dashboard 三个容器
 
-其中 broker 容器有可能会 `exited with code 253`，解决方法可以看这篇文章：[Docker 搭建部署 RocketMQ 遇到broker 253问题](https://blog.csdn.net/weixin_43955543/article/details/124047740)
+其中 broker 容器有可能会 `exited with code 253`
+，解决方法可以看这篇文章：[Docker 搭建部署 RocketMQ 遇到broker 253问题](https://blog.csdn.net/weixin_43955543/article/details/124047740)
+
+部署正常打开 dashboard 映射宿主机的端口能看到 rocketmq 控制台👇：
+
+![](https://wingbun-notes-image.oss-cn-guangzhou.aliyuncs.com/images/20220905215420.png)
 
 ### 项目部署方式
 

@@ -1,6 +1,7 @@
 package com.github.gelald.rocketmq.producer.client.controller;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
+import com.github.gelald.rocketmq.producer.client.MessagesSplitter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,23 +103,18 @@ public class DefaultProducerController {
     @ApiOperation("批量发送消息")
     @GetMapping("/batch-message")
     public String sendBatchMessage() throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
-        List<Message> messages = new ArrayList<>(3);
+        List<Message> messages = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
             String messageBody = "测试批量发送消息第" + i + "条消息";
             Message message = new Message((RocketMQConstant.TOPIC_PREFIX + "client"), "batch", messageBody.getBytes(StandardCharsets.UTF_8));
             messages.add(message);
-            // 3条为一批消息
-            if (messages.size() == 3) {
-                log.info("生产者发送消息");
-                this.defaultMQProducer.send(messages);
-                // 发送完消息需要清空集合
-                messages.clear();
-            }
         }
-        if (!CollectionUtils.isEmpty(messages)) {
-            // 如果遍历结束后集合还有内容，那么也需要把剩下的消息发送
-            log.info("生产者发送消息");
-            this.defaultMQProducer.send(messages);
+        // 每次获取一批不超出消息大小限制的消息来发送
+        MessagesSplitter messagesSplitter = new MessagesSplitter(messages);
+        while (messagesSplitter.hasNext()) {
+            List<Message> subMessageList = messagesSplitter.next();
+            SendResult sendResult = this.defaultMQProducer.send(subMessageList);
+            log.info("消息发送状态: {}", sendResult);
         }
         return "send complete";
     }
