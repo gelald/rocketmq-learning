@@ -18,6 +18,5 @@ learning:
         transaction: false
 
 base:
-  response-body-advice-package: ${base.swagger-package}
   swagger-package: com.github.gelald.rocketmq.producer.client.controller
   swagger-title: rocketmq-client方式集成rocketmq演示

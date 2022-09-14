@@ -17,7 +17,9 @@ import javax.validation.ConstraintViolationException;
  * @author WuYingBin
  * date: 2022/7/13
  */
-@RestControllerAdvice(basePackages = "${base.responseBodyAdvicePackage}")
+@RestControllerAdvice(basePackages = {
+        "com.github.gelald.rocketmq.producer.client.controller",
+        "com.github.gelald.rocketmq.producer.starter.controller"})
 public class ExceptionAdvice {
 
     /**
@@ -69,7 +71,7 @@ public class ExceptionAdvice {
      */
     @ExceptionHandler({Exception.class})
     public Result<?> handle(Exception ex) {
-        return Result.failed(ex.getMessage());
+        return Result.failed(ResultEnum.COMMON_FAILED.getMessage());
     }
 
 }

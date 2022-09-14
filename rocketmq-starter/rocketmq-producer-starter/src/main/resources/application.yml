@@ -22,6 +22,5 @@ rocketmq:
     retry-times-when-send-async-failed: 3
 
 base:
-  response-body-advice-package: ${base.swagger-package}
   swagger-package: com.github.gelald.rocketmq.producer.starter
   swagger-title: rocketmq-starter方式集成rocketmq演示
