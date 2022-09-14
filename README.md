@@ -57,8 +57,9 @@ RocketMQ 部署方式官网中提供了源码部署方式，我们这里使用 d
 
 验证是否启动成功：输入命令 `docker-compose ps` 可以看到 name-server、broker、dashboard 三个容器
 
-其中 broker 容器有可能会 `exited with code 253`
-，解决方法可以看这篇文章：[Docker 搭建部署 RocketMQ 遇到broker 253问题](https://blog.csdn.net/weixin_43955543/article/details/124047740)
+其中 broker 容器有可能会 `exited with code 253`，解决方法可以看以下文章：
+- [Docker 搭建部署 RocketMQ 遇到broker 253问题](https://blog.csdn.net/weixin_43955543/article/details/124047740)
+- [foxiswho/docker-rocketmq: rocketmq](https://github.com/foxiswho/docker-rocketmq)
 
 部署正常打开 dashboard 映射宿主机的端口能看到 rocketmq 控制台👇：
 
