@@ -3,6 +3,8 @@
 > 这个项目使用两种依赖方式整合了 RocketMQ 常见的使用方式
 >
 > 适合入门学习的小伙伴，也可以作为平时开发要使用 RocketMQ 时参考的原型
+>
+> 我的知识库👉[Javrin](https://github.com/gelald/javrin)，希望可以帮到你！希望可以给我一个Star，亮起小星星🌟～
 
 ## 模块说明
 
