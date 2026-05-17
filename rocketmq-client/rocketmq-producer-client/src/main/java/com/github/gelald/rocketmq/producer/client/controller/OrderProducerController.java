@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/order-producer")
 public class OrderProducerController {
 
+    // 用普通生产者发送即可，在消息处通过控制messageGroup来控制有序
     private DefaultMQProducer globalMQProducer;
     private DefaultMQProducer partitionedMQProducer;
 

@@ -1,7 +1,6 @@
 package com.github.gelald.rocketmq.producer.client;
 
-
-import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.client.apis.message.Message;
 
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Map;
  */
 public class MessagesSplitter implements Iterator<List<Message>> {
     private final int MAX_SIZE = 1024 * 1024 * 4;
-    private final int LOG_SIZE = 20;
     private final List<Message> messages;
     private int currentIndex = 0;
 
@@ -51,12 +49,13 @@ public class MessagesSplitter implements Iterator<List<Message>> {
 
     // 计算一个消息的尺寸
     private int calcMessageTotalSize(Message message) {
-        int size = message.getBody().length;
+        int size = message.getBody().array().length;
         Map<String, String> properties = message.getProperties();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             size += entry.getKey().length();
             size += entry.getValue().length();
         }
+        int LOG_SIZE = 20;
         size += LOG_SIZE;
         return size;
     }

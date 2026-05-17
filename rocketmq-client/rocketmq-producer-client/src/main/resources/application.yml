@@ -12,10 +12,7 @@ spring:
 learning:
   rocketmq:
     producer:
-      name-server-addr: localhost:9876
-      producer-switch:
-        order: false
-        transaction: false
+      proxy-addr: localhost:8081
 
 base:
   swagger-package: com.github.gelald.rocketmq.producer.client.controller

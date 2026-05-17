@@ -16,22 +16,11 @@
         <module>rocketmq-consumer-starter</module>
     </modules>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <artifactId>rocketmq-v5-client-spring-boot-starter</artifactId>
             <version>${rocketmq-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>${rocketmq-client.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.gelald</groupId>

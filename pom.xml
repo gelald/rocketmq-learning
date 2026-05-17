@@ -15,12 +15,13 @@
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <spring.boot.version>2.6.1</spring.boot.version>
-        <rocketmq-client.version>4.9.7</rocketmq-client.version>
-        <rocketmq-boot.version>2.2.2</rocketmq-boot.version>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.boot.version>3.4.13</spring.boot.version>
+        <rocketmq-client.version>5.2.0</rocketmq-client.version>
+        <rocketmq-boot.version>2.3.5</rocketmq-boot.version>
     </properties>
 
     <dependencyManagement>
