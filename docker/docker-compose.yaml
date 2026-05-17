@@ -1,6 +1,6 @@
 services:
   name-server:
-    image: apache/rocketmq:4.9.7
+    image: apache/rocketmq:5.2.0
     container_name: rocketmq-name-server
     ports:
       - "9876:9876"
@@ -9,7 +9,7 @@ services:
     command: sh mqnamesrv
 
   broker:
-    image: apache/rocketmq:4.9.7
+    image: apache/rocketmq:5.2.0
     container_name: rocketmq-broker
     ports:
       - "10909:10909"
@@ -18,20 +18,36 @@ services:
     volumes:
       - $PWD/rocketmq-broker/logs:/home/rocketmq/logs
       - $PWD/rocketmq-broker/store:/home/rocketmq/store
-      - $PWD/rocketmq-broker/conf/broker.conf:/home/rocketmq/rocketmq-4.9.7/conf/broker.conf
+      - $PWD/rocketmq-broker/conf/broker.conf:/home/rocketmq/rocketmq-5.2.0/conf/broker.conf
     environment:
       - JAVA_OPT_EXT=-server -Xms1g -Xmx1g -Xmn512m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m
-    command: sh mqbroker -n name-server:9876 -c /home/rocketmq/rocketmq-4.9.7/conf/broker.conf
+    command: sh mqbroker -n name-server:9876 -c /home/rocketmq/rocketmq-5.2.0/conf/broker.conf
     depends_on:
       - name-server
+
+  proxy:
+    image: apache/rocketmq:5.2.0
+    container_name: rmqproxy
+    ports:
+      - 8080:8080
+      - 8081:8081
+    volumes:
+      - $PWD/logs:/home/rocketmq/logs
+      - $PWD/rmq-proxy.json:/home/rocketmq/rocketmq-5.2.0/conf/rmq-proxy.json
+    depends_on:
+      - namesrv
+    networks:
+      - docker-internal
+    command: sh mqproxy -pc /home/rocketmq/rocketmq-5.2.0/conf/rmq-proxy.json -n namesrv:9876 -pm local
 
   dashboard:
     image: apacherocketmq/rocketmq-dashboard:1.0.0
     container_name: rocketmq-dashboard
     ports:
       - "8080:8080"
-    environment:
-      - JAVA_OPTS=-Drocketmq.namesrv.addr=name-server:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+#    environment:
+#      - JAVA_OPTS=-Drocketmq.namesrv.addr=name-server:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+    entrypoint: /bin/sh -c "java $JAVA_OPTS -jar /rocketmq-dashboard.jar --rocketmq.config.isVIPChannel=false --rocketmq.config.namesrvAddrs[0]=namesrv:9876 --rocketmq.config.proxyAddrs[0]=proxy:8080"
     volumes:
       - $PWD/rocketmq-dashboard/tmp:/tmp
     depends_on:
