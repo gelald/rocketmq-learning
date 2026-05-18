@@ -1,6 +1,5 @@
 package com.github.gelald.rocketmq.producer.client.configuration;
 
-import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
 import com.github.gelald.rocketmq.producer.client.property.RocketMQProducerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -24,7 +23,11 @@ public class RocketMQDefaultProducerConfiguration extends RocketMQBaseProducerCo
     public Producer defaultMQProducer() throws ClientException {
         // 创建消息生产者
         Producer defaultMQProducer = provider.newProducerBuilder()
-                .setTopics(RocketMQConstant.PRODUCER_GROUP_PREFIX + "client")
+                // setTopics的作用是预注册 topic，让客户端在启动时预先获取路由元数据
+                // 创建时一旦设置，那么发送的消息 topic 只能从这里选择，不能发送新的 topic
+                // 并且可以快速失败检测，不用等到发送消息时才报错
+                // 可以不设置，保持灵活，全局复用同一个 producer
+                // .setTopics()
                 .setClientConfiguration(configuration)
                 // 设置事务回查逻辑，即使定义了也可以发送普通消息
                 // 事务提交或回滚放到了调用方

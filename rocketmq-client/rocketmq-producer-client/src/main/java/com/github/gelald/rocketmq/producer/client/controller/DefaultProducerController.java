@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class DefaultProducerController {
 
-    private Producer defaultMQProducer;
+    private final Producer defaultMQProducer;
 
     @ApiOperation("同步发送普通消息")
     @GetMapping("/sync-ordinary")
