@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
+import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.message.Message;
 import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.RecallReceipt;
@@ -37,9 +38,11 @@ public class DefaultProducerController {
     @ApiOperation("同步发送普通消息")
     @GetMapping("/sync-ordinary")
     public SendReceipt sendOrdinaryMessageSynchronously() throws ClientException {
-        Message message = new MessageBuilderImpl()
+        final ClientServiceProvider provider = ClientServiceProvider.loadService();
+        Message message = provider.newMessageBuilder()
                 .setTopic((RocketMQConstant.TOPIC_PREFIX + "client"))
                 .setTag("sync")
+                .setKeys("ordinary message key")
                 .setBody("send ordinary message synchronously".getBytes(StandardCharsets.UTF_8))
                 .build();
         SendReceipt sendReceipt = this.defaultMQProducer.send(message);

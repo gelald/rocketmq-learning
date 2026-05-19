@@ -1,14 +1,10 @@
 package com.github.gelald.rocketmq.consumer.client.listener.order;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
-import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
-import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
+import org.apache.rocketmq.client.apis.consumer.MessageListener;
+import org.apache.rocketmq.client.apis.message.MessageView;
 import org.springframework.stereotype.Component;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * @author WuYingBin
@@ -16,13 +12,10 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class PartitionedOrderListenerOne implements MessageListenerOrderly {
+public class PartitionedOrderListenerOne implements MessageListener {
     @Override
-    public ConsumeOrderlyStatus consumeMessage(List<MessageExt> messageExtList, ConsumeOrderlyContext context) {
-        for (MessageExt messageExt : messageExtList) {
-            String body = new String(messageExt.getBody(), StandardCharsets.UTF_8);
-            log.info("PartitionedOrderListenerOne成功消费消息: {}", body);
-        }
-        return ConsumeOrderlyStatus.SUCCESS;
+    public ConsumeResult consume(MessageView messageView) {
+        log.info("PartitionedOrderListenerOne成功消费消息: {}", messageView);
+        return ConsumeResult.SUCCESS;
     }
 }

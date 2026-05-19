@@ -1,14 +1,16 @@
 package com.github.gelald.rocketmq.consumer.client.configuration;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
+import com.github.gelald.rocketmq.consumer.client.listener.DefaultListener;
+import com.github.gelald.rocketmq.consumer.client.property.RocketMQConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
-import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.apache.rocketmq.client.apis.ClientException;
+import org.apache.rocketmq.client.apis.consumer.FilterExpression;
+import org.apache.rocketmq.client.apis.consumer.PushConsumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
 
 /**
  * @author WuYingBin
@@ -17,23 +19,22 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class RocketMQDefaultConsumerConfiguration extends RocketMQBaseConsumerConfiguration {
+    public RocketMQDefaultConsumerConfiguration(RocketMQConsumerProperties rocketMQConsumerProperties) {
+        super(rocketMQConsumerProperties);
+    }
+
     /**
      * 消费普通消息的消费者
      */
     @Bean
-    public DefaultMQPushConsumer defaultMQPushConsumer(MessageListenerConcurrently defaultListener) throws MQClientException {
-        // 创建消息消费者，设置消费者组的同时开启消息轨迹
-        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client"), true);
-        // 设置消费者NameServer地址，用于寻找Broker
-        defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
-        // 设置消费者组订阅的Topic等信息
-        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client"), "*");
-        // 设置消费者消息监听器
-        defaultMQPushConsumer.setMessageListener(defaultListener);
-        // 启动消费者
-        defaultMQPushConsumer.start();
-        // 把创建的消费者放到一个集合中，当程序结束时统一销毁
-        mqConsumers.add(defaultMQPushConsumer);
-        return defaultMQPushConsumer;
+    public PushConsumer defaultMQPushConsumer(DefaultListener defaultListener) throws ClientException {
+        PushConsumer pushConsumer = provider.newPushConsumerBuilder()
+                .setClientConfiguration(configuration)
+                .setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client"))
+                .setSubscriptionExpressions(Collections.singletonMap((RocketMQConstant.TOPIC_PREFIX + "client"), FilterExpression.SUB_ALL))
+                .setMessageListener(defaultListener)
+                .build();
+        mqConsumers.add(pushConsumer);
+        return pushConsumer;
     }
 }

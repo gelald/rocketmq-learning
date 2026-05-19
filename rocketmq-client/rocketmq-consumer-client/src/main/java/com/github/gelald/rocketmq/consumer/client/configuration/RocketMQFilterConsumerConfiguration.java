@@ -1,14 +1,18 @@
 package com.github.gelald.rocketmq.consumer.client.configuration;
 
 import com.github.gelald.rocketmq.common.constant.RocketMQConstant;
+import com.github.gelald.rocketmq.consumer.client.property.RocketMQConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.MessageSelector;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.apis.ClientException;
+import org.apache.rocketmq.client.apis.consumer.FilterExpression;
+import org.apache.rocketmq.client.apis.consumer.FilterExpressionType;
+import org.apache.rocketmq.client.apis.consumer.MessageListener;
+import org.apache.rocketmq.client.apis.consumer.PushConsumer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
 
 /**
  * @author WuYingBin
@@ -18,35 +22,39 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(prefix = "learning.rocketmq.consumer.consumer-switch", name = "filter", havingValue = "true")
 public class RocketMQFilterConsumerConfiguration extends RocketMQBaseConsumerConfiguration {
+    public RocketMQFilterConsumerConfiguration(RocketMQConsumerProperties rocketMQConsumerProperties) {
+        super(rocketMQConsumerProperties);
+    }
+
     /**
      * 使用Tag过滤的消费者
      */
     @Bean
-    public DefaultMQPushConsumer tagFilterConsumer(MessageListenerConcurrently defaultListener) throws MQClientException {
-        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
-        defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
-        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-tag-filter"));
-        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"),
-                MessageSelector.byTag("phone || shoes"));
-        defaultMQPushConsumer.setMessageListener(defaultListener);
-        defaultMQPushConsumer.start();
-        mqConsumers.add(defaultMQPushConsumer);
-        return defaultMQPushConsumer;
+    public PushConsumer tagFilterConsumer(MessageListener defaultListener) throws ClientException {
+        PushConsumer pushConsumer = provider.newPushConsumerBuilder()
+                .setClientConfiguration(configuration)
+                .setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-tag-filter"))
+                .setSubscriptionExpressions(Collections.singletonMap((RocketMQConstant.TOPIC_PREFIX + "client-tag-filter"),
+                        new FilterExpression("phone || shoes")))
+                .setMessageListener(defaultListener)
+                .build();
+        mqConsumers.add(pushConsumer);
+        return pushConsumer;
     }
 
     /**
      * 使用SQL过滤的消费者
      */
     @Bean
-    public DefaultMQPushConsumer sqlFilterConsumer(MessageListenerConcurrently defaultListener) throws MQClientException {
-        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer();
-        defaultMQPushConsumer.setNamesrvAddr(rocketMQConsumerProperties.getNameServerAddr());
-        defaultMQPushConsumer.setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-sql-filter"));
-        defaultMQPushConsumer.subscribe((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"),
-                MessageSelector.bySql("price is not null and price between 10 and 30"));
-        defaultMQPushConsumer.setMessageListener(defaultListener);
-        defaultMQPushConsumer.start();
-        mqConsumers.add(defaultMQPushConsumer);
-        return defaultMQPushConsumer;
+    public PushConsumer sqlFilterConsumer(MessageListener defaultListener) throws ClientException {
+        PushConsumer pushConsumer = provider.newPushConsumerBuilder()
+                .setClientConfiguration(configuration)
+                .setConsumerGroup((RocketMQConstant.CONSUMER_GROUP_PREFIX + "client-tag-filter"))
+                .setSubscriptionExpressions(Collections.singletonMap((RocketMQConstant.TOPIC_PREFIX + "client-sql-filter"),
+                        new FilterExpression("price is not null and price between 10 and 30", FilterExpressionType.SQL92)))
+                .setMessageListener(defaultListener)
+                .build();
+        mqConsumers.add(pushConsumer);
+        return pushConsumer;
     }
 }
