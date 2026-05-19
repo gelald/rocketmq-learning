@@ -25,10 +25,6 @@ public class RocketMQConsumerProperties {
          */
         private Boolean order = false;
         /**
-         * 是否创建测试消费方式的消费者
-         */
-        private Boolean messageModel = false;
-        /**
          * 是否创建测试过滤消息的消费者
          */
         private Boolean filter = false;

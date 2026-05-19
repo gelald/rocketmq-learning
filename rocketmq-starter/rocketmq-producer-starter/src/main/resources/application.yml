@@ -11,17 +11,8 @@ spring:
 
 
 rocketmq:
-  name-server: localhost:9876
   producer:
-    group: rocketmq-producer-starter
-    # 消息发送超时时长，默认3s
-    send-message-timeout: 3000
-    # 同步发送消息失败重试次数，默认2
-    retry-times-when-send-failed: 3
-    # 异步发送消息失败重试次数，默认2
-    retry-times-when-send-async-failed: 3
-    # 开启消息轨迹，默认的轨迹topic是RMQ_SYS_TRACE_TOPIC
-    enable-msg-trace: true
+    endpoints: localhost:8081
 
 base:
   swagger-package: com.github.gelald.rocketmq.producer.starter

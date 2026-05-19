@@ -20,6 +20,5 @@ learning:
     consumer:
       consumer-switch:
         order: false
-        message-model: false
         filter: false
         transaction: false
