@@ -1,54 +1,52 @@
 services:
   name-server:
-    image: apache/rocketmq:5.2.0
-    container_name: rocketmq-name-server
+    image: apache/rocketmq:5.3.4
+    container_name: name-server-5
     ports:
       - "9876:9876"
     volumes:
-      - $PWD/rocketmq-name-server/logs:/home/rocketmq/logs
+      - ./logs:/home/rocketmq/logs
     command: sh mqnamesrv
+    networks:
+      - docker-internal
 
   broker:
-    image: apache/rocketmq:5.2.0
-    container_name: rocketmq-broker
+    image: apache/rocketmq:5.3.4
+    container_name: broker-5
     ports:
       - "10909:10909"
       - "10911:10911"
       - "10912:10912"
+      - "8080:8080"
+      - "8081:8081"
     volumes:
-      - $PWD/rocketmq-broker/logs:/home/rocketmq/logs
-      - $PWD/rocketmq-broker/store:/home/rocketmq/store
-      - $PWD/rocketmq-broker/conf/broker.conf:/home/rocketmq/rocketmq-5.2.0/conf/broker.conf
+      - ./logs:/home/rocketmq/logs
+      - ./store:/home/rocketmq/store
+      - ./conf/broker.conf:/home/rocketmq/rocketmq-5.3.4/conf/broker.conf
     environment:
       - JAVA_OPT_EXT=-server -Xms1g -Xmx1g -Xmn512m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m
-    command: sh mqbroker -n name-server:9876 -c /home/rocketmq/rocketmq-5.2.0/conf/broker.conf
+    # 在 Local 模式下，Broker 和 Proxy 同进程部署
+    command: sh mqbroker -n name-server:9876 -c /home/rocketmq/rocketmq-5.3.4/conf/broker.conf --enable-proxy
     depends_on:
       - name-server
-
-  proxy:
-    image: apache/rocketmq:5.2.0
-    container_name: rmqproxy
-    ports:
-      - 8080:8080
-      - 8081:8081
-    volumes:
-      - $PWD/logs:/home/rocketmq/logs
-      - $PWD/rmq-proxy.json:/home/rocketmq/rocketmq-5.2.0/conf/rmq-proxy.json
-    depends_on:
-      - namesrv
     networks:
       - docker-internal
-    command: sh mqproxy -pc /home/rocketmq/rocketmq-5.2.0/conf/rmq-proxy.json -n namesrv:9876 -pm local
 
   dashboard:
-    image: apacherocketmq/rocketmq-dashboard:1.0.0
-    container_name: rocketmq-dashboard
+    # arm 架构
+    image: wuyb2020/built-rocketmq-dashboard:2.0.1
+    # amd 架构 内部端口是 8082
+    # image: wuyb2020/built-rocketmq-dashboard:2.0.0
+    container_name: dashboard
     ports:
-      - "8080:8080"
-#    environment:
-#      - JAVA_OPTS=-Drocketmq.namesrv.addr=name-server:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
-    entrypoint: /bin/sh -c "java $JAVA_OPTS -jar /rocketmq-dashboard.jar --rocketmq.config.isVIPChannel=false --rocketmq.config.namesrvAddrs[0]=namesrv:9876 --rocketmq.config.proxyAddrs[0]=proxy:8080"
+      - "18080:8080"
+    entrypoint: /bin/sh -c "java $JAVA_OPTS -jar /rocketmq-dashboard.jar --rocketmq.config.isVIPChannel=false --rocketmq.config.namesrvAddrs[0]=name-server:9876"
     volumes:
-      - $PWD/rocketmq-dashboard/tmp:/tmp
-    depends_on:
-      - name-server
+      - ./tmp:/tmp
+    networks:
+      - docker-internal
+
+networks:
+  # 定义外部网络，命令 docker network create docker-internal
+  docker-internal:
+    external: true
